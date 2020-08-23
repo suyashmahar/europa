@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Jupytron</title>
+    <!-- <link rel="stylesheet" href="../node_modules/spectre.css/dist/spectre.min.css"> -->
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Jupytron</h1>
+      <h5>Editing evolved</h5>
+
+      <div class="main-section">
+        <h4 class="section-header">Start</h4>
+        <ul class="compact-list">
+          <li id="createTodoBtn" class="compact-list-item"><a href="#">New server</a></li>
+          <li class="compact-list-item"><a href="#">Open url...</a></li>
+        </ul>
+      </div>
+      
+      <div class="main-section">
+        <h4 class="section-header">Recent</h4>
+        <ul class="compact-list" id="todoList">
+          <li class="recent-item"><a href="#">https://shiftlab08.cs.virginia.edu:1080/lab?</a></li>
+          <li class="recent-item"><a href="#">http://localhost:8888</a></li>
+          <li class="recent-item"><a href="#">http://shiftlab08.cs.virginia.edu:1080/lab?</a></li>
+        </ul>
+      </div>
+      
+      <div class="main-section">
+        <h4 class="section-header">Help</h4>
+        <ul class="compact-list">
+          <li class="compact-list-item"><a href="#">Keyboard shortcuts</a></li>
+          <li class="compact-list-item"><a href="#">Tips and tricks</a></li>
+          <li class="compact-list-item"><a href="#">Product documentation</a></li>
+          <li class="compact-list-item"><a href="#">Report an issue</a></li>
+          <li class="compact-list-item"><a href="#">GitHub repository</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+
+
+    </div>
+
+    <script src="./index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+
+</html>
