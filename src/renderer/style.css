@@ -3,6 +3,25 @@ body {
   background-color: #fffbf6 !important;
 }
 
+.recent-item-link {}
+
+.inline-btn-link-delete {
+  padding-left: 0.5%;
+  opacity: 0;
+  font-size: 80%;
+  text-decoration: none !important;
+}
+
+.inline-btn-link-delete:hover {
+  opacity: 1;
+  color: red;
+}
+
+.recent-item-link:hover + .inline-btn-link-delete {
+  opacity: 1;
+  color: red;
+}
+
 .vertical-center {
   background-color: #fffbf6 !important;
   min-height: 100%;  /* Fallback for browsers do NOT support vh unit */

@@ -5,8 +5,10 @@ const { app, ipcMain, BrowserWindow } = require('electron')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
+const electronLocalshortcut = require('electron-localshortcut');
 
-require('electron-reload')(__dirname)
+require('electron-reload')(process.cwd())
+
 
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' })
@@ -19,6 +21,8 @@ function main () {
 
   // add todo window
   let addTodoWin
+  let newJupyterWin
+  let newServerDialog
 
   // TODO: put these events into their own file
 
@@ -77,30 +81,46 @@ function main () {
 
   // create add todo window
   ipcMain.on('open-url', (e, url) => {
-    console.log(url);
-    // if addTodoWin does not already exist
-    if (!newJupyterWin) {
-      // create a new add todo window
-      newJupyterWin = new BrowserWindow({
-        width: 500,
-        height: 120,
-        // close with the main window
-        parent: mainWindow
-      })
-      newJupyterWin.loadURL(url);
 
-      // Disable menu bar
-      // newJupyterWin.setMenu(null)
-      // newJupyterWin.setAutoHideMenuBar(true)
-
-      // cleanup
-      newJupyterWin.on('closed', () => {
-        newJupyterWin = null
-      })
-      newJupyterWin.once('ready-to-show', () => {
-        newJupyterWin.show()
-      })
+    // Create a title for the new window
+    var windowTitle = 'Europa @ '.concat(url.substring(0, 100));
+    if (url.length > 100) {
+      windowTitle.concat('...');
     }
+
+    console.log(windowTitle);
+    newJupyterWin = new BrowserWindow({
+      width: 1080,
+      height: 768,
+      webPreferences: {
+        nodeIntegration: false
+      },
+      title: windowTitle
+    })
+    newJupyterWin.loadURL(url);
+
+    // Disable menu bar
+    newJupyterWin.setMenu(null)
+    newJupyterWin.setAutoHideMenuBar(true)
+
+    // cleanup
+    newJupyterWin.on('closed', () => {
+      newJupyterWin = null
+    })
+    newJupyterWin.once('ready-to-show', () => {
+      newJupyterWin.show()
+    })
+
+    // Prevent the title from being updated
+    newJupyterWin.on('page-title-updated', (evt) => {
+      evt.preventDefault();
+    });
+
+    // Register shortcuts
+    electronLocalshortcut.register(newJupyterWin, 'Ctrl+Shift+W', () => {
+      newJupyterWin.close();
+      console.log('You pressed ctrl+shift+w');
+    });
   })
 
   // add-todo from add todo window
