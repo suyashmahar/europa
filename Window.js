@@ -4,8 +4,8 @@ const { BrowserWindow } = require('electron')
 
 // default window settings
 const defaultProps = {
-  width: 500,
-  height: 800,
+  width: 1080,
+  height: 768,
   show: false,
   
   // update for electron V5+

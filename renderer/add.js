@@ -5,7 +5,6 @@ const electron = require('electron')
 const path = require('path')
 const remote = electron.remote
 
-// document.getElementById('todoForm').addEventListener('submit', (evt) => {
 document.getElementById('submit-btn').addEventListener('click', (evt) => {
   // prevent default refresh functionality of forms
   evt.preventDefault()
@@ -15,6 +14,10 @@ document.getElementById('submit-btn').addEventListener('click', (evt) => {
   ipcRenderer.send('add-todo', input.value)
 
   input.value = ''
+
+  // Close the window
+  var window = remote.getCurrentWindow();
+  window.close();
 })
 
 document.getElementById('cancel-btn').addEventListener('click', (evt) => {

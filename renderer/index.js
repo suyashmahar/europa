@@ -3,13 +3,17 @@
 const { ipcRenderer } = require('electron')
 
 // delete todo by its text value ( used below in event listener)
-const deleteTodo = (e) => {
-  ipcRenderer.send('delete-todo', e.target.textContent)
+const recentItemClicked = (e) => {
+  console.log(e.target.textContent);
+  // ipcRenderer.send('delete-todo', e.target.textContent)
+  ipcRenderer.send('open-url', e.target.textContent);
 }
 
-// create add todo window button
-document.getElementById('createTodoBtn').addEventListener('click', () => {
-  ipcRenderer.send('add-todo-window')
+document.getElementById('openUrlBtn').addEventListener('click', () => {
+  ipcRenderer.send('open-url-window')
+})
+document.getElementById('newServerBtn').addEventListener('click', () => {
+  ipcRenderer.send('new-server-window')
 })
 
 // on receive todos
@@ -19,7 +23,7 @@ ipcRenderer.on('todos', (event, todos) => {
 
   // create html string
   const todoItems = todos.reduce((html, todo) => {
-    html += `<li class="todo-item">${todo}</li>`
+    html += `<li class="recent-item"><a href="javascript:void" id="${todo}">${todo}</a></li>`
 
     return html
   }, '')
@@ -28,7 +32,7 @@ ipcRenderer.on('todos', (event, todos) => {
   todoList.innerHTML = todoItems
 
   // add click handlers to delete the clicked todo
-  todoList.querySelectorAll('.todo-item').forEach(item => {
-    item.addEventListener('click', deleteTodo)
+  todoList.querySelectorAll('.recent-item').forEach(item => {
+    item.addEventListener('click', recentItemClicked)
   })
 })

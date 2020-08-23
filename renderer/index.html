@@ -11,42 +11,37 @@
   </head>
 
   <body>
-    <div class="container">
-      <h1>Jupytron</h1>
-      <h5>Editing evolved</h5>
+    <div class="jumbotron vertical-center">
+      <div class="container">
+        <h1>Jupytron</h1>
+        <h3>Editing evolved</h3>
 
-      <div class="main-section">
-        <h4 class="section-header">Start</h4>
-        <ul class="compact-list">
-          <li id="createTodoBtn" class="compact-list-item"><a href="#">New server</a></li>
-          <li class="compact-list-item"><a href="#">Open url...</a></li>
-        </ul>
+        <div class="main-section">
+          <h4 class="section-header">Start</h4>
+          <ul class="compact-list">
+            <li id="newServerBtn" class="compact-list-item"><a href="javascript:void">New Jupyter server</a></li>
+            <li id="openUrlBtn" class="compact-list-item"><a href="javascript:void">Open url...</a></li>
+          </ul>
+        </div>
+        
+        <div class="main-section">
+          <h4 class="section-header">Recent</h4>
+          <ul class="compact-list" id="todoList">
+            <li class="recent-item">No recent items</li>
+          </ul>
+        </div>
+        
+        <div class="main-section">
+          <h4 class="section-header">Help</h4>
+          <ul class="compact-list">
+            <li class="compact-list-item"><a href="#">Keyboard shortcuts</a></li>
+            <li class="compact-list-item"><a href="#">Tips and tricks</a></li>
+            <li class="compact-list-item"><a href="#">Product documentation</a></li>
+            <li class="compact-list-item"><a href="#">Report an issue</a></li>
+            <li class="compact-list-item"><a href="#">GitHub repository</a></li>
+          </ul>
+        </div>
       </div>
-      
-      <div class="main-section">
-        <h4 class="section-header">Recent</h4>
-        <ul class="compact-list" id="todoList">
-          <li class="recent-item"><a href="#">https://shiftlab08.cs.virginia.edu:1080/lab?</a></li>
-          <li class="recent-item"><a href="#">http://localhost:8888</a></li>
-          <li class="recent-item"><a href="#">http://shiftlab08.cs.virginia.edu:1080/lab?</a></li>
-        </ul>
-      </div>
-      
-      <div class="main-section">
-        <h4 class="section-header">Help</h4>
-        <ul class="compact-list">
-          <li class="compact-list-item"><a href="#">Keyboard shortcuts</a></li>
-          <li class="compact-list-item"><a href="#">Tips and tricks</a></li>
-          <li class="compact-list-item"><a href="#">Product documentation</a></li>
-          <li class="compact-list-item"><a href="#">Report an issue</a></li>
-          <li class="compact-list-item"><a href="#">GitHub repository</a></li>
-        </ul>
-      </div>
-
-    </div>
-
-
-
     </div>
 
     <script src="./index.js"></script>
