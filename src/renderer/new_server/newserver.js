@@ -11,3 +11,4 @@ document.getElementById('advancedUser').addEventListener('click', (evt) => {
   console.log(filePath);
   remote.getCurrentWindow().loadFile(filePath);
 })
+

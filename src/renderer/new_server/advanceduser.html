@@ -11,7 +11,7 @@
         <div class="container">
             <div class="container large-header" id="advanced-config-header">
                 <a class="back-btn" href="javascript:void" id="backBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
-                <h2 style="display: inline;">Advanced configuration</h2>
+                <h2 id="advanced-config-header-txt">Advanced configuration</h2>
             </div>
 
             <div class="input-group mb-3">
@@ -22,24 +22,33 @@
             </div>
 
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Path to initial directory" aria-label="Recipient's username" aria-describedby="basic-addon2" id="pythonInterpreterPath">
+                <input type="text" class="form-control" placeholder="Path to initial directory" aria-label="Recipient's username" aria-describedby="basic-addon2" id="initialPath">
                 <div class="input-group-append form-inline-link-div">
-                    <a class="form-inline-link" href="javascript:void" id="pythonInterpreterPathBtn"><i class="fas fa-search"></i></a>
+                    <a class="form-inline-link" href="javascript:void" id="initialPathBtn"><i class="fas fa-search"></i></a>
                 </div>
             </div>
 
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Port number (number or 'auto')" aria-label="Recipient's username" aria-describedby="basic-addon2" id="pythonInterpreterPath">
+                <input type="text" class="form-control" placeholder="Port number (number or 'auto')" aria-label="Recipient's username" aria-describedby="basic-addon2" id="portNum">
                 <div class="input-group-append form-inline-link-div">
-                    <a class="form-inline-link" href="javascript:void" id="pythonInterpreterPathBtn"></a>
+                    <a class="form-inline-link" href="javascript:void" id="portNumBtn"></a>
                 </div>
             </div>
+            
+            <a class="refill-btn" href="javascript:void" id="refillBtn"><i class="fas fa-redo refill-btn-txt"></i></a>
+            <a class="refill-btn-tool-tip text-primary">rescan</a>
             
             <div class="col-sm advanced-config-btn-grp">
                 <button id="submitBtn" type="submit" class="btn btn-primary float-right">start</button>
                 <button id="cancelBtn" type="cancel" class="btn btn-secondary float-right">cancel</button>
             </div>
       
+        </div>
+
+        <div class="result-box">
+            <a id='resultBox'>
+                All good
+            </a>
         </div>
 
         <div class="need-help-link">

@@ -12,6 +12,16 @@ body {
     padding-bottom: 1%;
 }
 
+.result-box {
+    font-size: small;
+    text-align: left;
+    position:absolute;
+    bottom:0;
+    left:0;
+    padding-left: 3%;
+    padding-bottom: 1%;
+}
+
 .msg {
     margin-top: 6%;
     text-align: center;
@@ -27,12 +37,36 @@ body {
     padding-right: 3%;
 }
 
+.refill-btn {
+    margin-left: 0;
+    padding-left: 0;
+    margin-right: 1%;
+    /* float: right; */
+}
+
+.refill-btn-tool-tip {
+    margin-left: 0;
+    display:inline-block;
+    /* vertical-align: bottom;  */
+    font-size: smaller;
+    opacity: 0;
+}
+
+.refill-btn:hover + .refill-btn-tool-tip {
+    opacity: 1;
+    transition-delay: 0.3s;
+}
+
+.refill-btn-tool-tip {
+}
+
 .advanced-config-btn-grp {
+    display: inline;
     margin-top: 7%;
 }
 
 .form-inline-link-div {
-    width: 15%;
+    width: 8%;
     display: flex;
     justify-content: center;
 }
@@ -44,6 +78,10 @@ body {
 
 #advanced-config-header {
     padding-bottom: 10%;
+}
+
+#advanced-config-header-txt {
+    display: inline;
 }
 
 .no-top-padding {

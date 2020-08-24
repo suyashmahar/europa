@@ -6,11 +6,27 @@ const { app, ipcMain, BrowserWindow } = require('electron')
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 const electronLocalshortcut = require('electron-localshortcut');
+const commandExists = require('command-exists');
+const { execSync } = require('child_process')
+const exec = require('child_process').exec;
 
 require('electron-reload')(process.cwd())
 
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' })
+
+function getPythonInterpreter() {
+  var result = undefined;
+  var found = commandExists.sync('python3') 
+                || commandExists.sync('python') 
+                || commandExists.sync('python');
+  if (found) {
+    result = execSync("python -c 'import sys; print(sys.executable)'")
+  }
+
+  console.log('Returning: '.concat(result));
+  return result;
+}
 
 function main () {
   // todo list window
@@ -29,6 +45,14 @@ function main () {
   mainWindow.once('show', () => {
     mainWindow.webContents.send('todos', todosData.todos)
   })
+
+  ipcMain.on('get-sys-cfg-jupyter-lab', (event) => {
+    console.log('get-sys-cfg-jupyter-lab() called')
+    var resp = (
+      getPythonInterpreter()
+    );
+    event.sender.send('asynchronous-reply', resp);
+  });
 
   // create add todo window
   ipcMain.on('open-url-window', () => {
