@@ -3,6 +3,7 @@ body {
 }
 
 .need-help-link {
+    font-size: small;
     text-align: right;
     position:absolute;
     bottom:0;
@@ -18,7 +19,35 @@ body {
 
 .large-header {
     padding-top: 10%;
+    padding-bottom: 8%;
+    padding-left: 0;
+}
+
+.back-btn {
+    padding-right: 3%;
+}
+
+.advanced-config-btn-grp {
+    margin-top: 7%;
+}
+
+.form-inline-link-div {
+    width: 15%;
+    display: flex;
+    justify-content: center;
+}
+
+.form-inline-link {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#advanced-config-header {
     padding-bottom: 10%;
+}
+
+.no-top-padding {
+    padding-top: 0%;
 }
 
 .vertical-center {
@@ -34,31 +63,21 @@ body {
     margin-right:0%; 
     padding-right: 0%;
     padding-left: 1%;
-    opacity: 0.8;
 }
 
 .text-col {
     padding-left: 2.5%;
-    opacity: 0.8;
-}
-
-.icon-col:hover {
-    opacity: 1;
-}
-
-.text-col:hover {
-    opacity: 1;
 }
 
 .descriptive-option {
+    opacity: 0.8;
     padding-top: 2%;
     padding-bottom: 2%;
-    /* margin-top: 5%; */
     height: 20%;
-    /* table-layout: fixed; */
 }
 
 .descriptive-option:hover {
+    opacity: 1;
     background: #f8f2eb;
     cursor: pointer;
 }

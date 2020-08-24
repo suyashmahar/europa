@@ -9,7 +9,6 @@ const electronLocalshortcut = require('electron-localshortcut');
 
 require('electron-reload')(process.cwd())
 
-
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' })
 
@@ -73,8 +72,8 @@ function main () {
       })
 
       // Disable menu bar
-      newServerDialog.setMenu(null)
-      newServerDialog.setAutoHideMenuBar(true)
+      // newServerDialog.setMenu(null)
+      // newServerDialog.setAutoHideMenuBar(true)
 
       // cleanup
       newServerDialog.on('closed', () => {

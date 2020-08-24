@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Create new server</title>
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+        <link rel="stylesheet" href="newserver.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="container large-header" id="advanced-config-header">
+                <a class="back-btn" href="javascript:void" id="backBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
+                <h2 style="display: inline;">Advanced configuration</h2>
+            </div>
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Path to python interpreter" aria-label="Recipient's username" aria-describedby="basic-addon2" id="pythonInterpreterPath">
+                <div class="input-group-append form-inline-link-div">
+                    <a class="form-inline-link" href="javascript:void" id="pythonInterpreterPathBtn"><i class="fas fa-search"></i></a>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Path to initial directory" aria-label="Recipient's username" aria-describedby="basic-addon2" id="pythonInterpreterPath">
+                <div class="input-group-append form-inline-link-div">
+                    <a class="form-inline-link" href="javascript:void" id="pythonInterpreterPathBtn"><i class="fas fa-search"></i></a>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Port number (number or 'auto')" aria-label="Recipient's username" aria-describedby="basic-addon2" id="pythonInterpreterPath">
+                <div class="input-group-append form-inline-link-div">
+                    <a class="form-inline-link" href="javascript:void" id="pythonInterpreterPathBtn"></a>
+                </div>
+            </div>
+            
+            <div class="col-sm advanced-config-btn-grp">
+                <button id="submitBtn" type="submit" class="btn btn-primary float-right">start</button>
+                <button id="cancelBtn" type="cancel" class="btn btn-secondary float-right">cancel</button>
+            </div>
+      
+        </div>
+
+        <div class="need-help-link">
+            <a href="javascript:void">Need help?</a>
+        </div>
+
+        <script src="./advanceduser.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/ad56bed05a.js" crossorigin="anonymous"></script>
+        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+
+</html>
