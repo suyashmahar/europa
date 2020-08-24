@@ -62,8 +62,12 @@ function main () {
       // create a new add todo window
       newServerDialog = new Window({
         file: path.join('renderer', 'new_server', 'newserver.html'),
-        width: 500,
-        height: 120,
+        width: 600,
+        height: 400,
+        maxWidth: 600,
+        maxHeight: 400,
+        minWidth: 600,
+        minHeight: 400,
         // close with the main window
         parent: mainWindow
       })
@@ -90,8 +94,8 @@ function main () {
 
     console.log(windowTitle);
     newJupyterWin = new BrowserWindow({
-      width: 1080,
-      height: 768,
+      width: 600,
+      height: 350,
       webPreferences: {
         nodeIntegration: false
       },

@@ -1,4 +1,64 @@
+body {
+    background-color: #fffbf6 !important;
+}
+
+.need-help-link {
+    text-align: right;
+    position:absolute;
+    bottom:0;
+    right:0;
+    padding-right: 3%;
+    padding-bottom: 1%;
+}
+
 .msg {
     margin-top: 6%;
     text-align: center;
+}
+
+.large-header {
+    padding-top: 10%;
+    padding-bottom: 10%;
+}
+
+.vertical-center {
+    background-color: #fffbf6 !important;
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+  
+    display: flex;
+    align-items: center;
+}
+
+.icon-col {
+    margin-right:0%; 
+    padding-right: 0%;
+    padding-left: 1%;
+    opacity: 0.8;
+}
+
+.text-col {
+    padding-left: 2.5%;
+    opacity: 0.8;
+}
+
+.icon-col:hover {
+    opacity: 1;
+}
+
+.text-col:hover {
+    opacity: 1;
+}
+
+.descriptive-option {
+    padding-top: 2%;
+    padding-bottom: 2%;
+    /* margin-top: 5%; */
+    height: 20%;
+    /* table-layout: fixed; */
+}
+
+.descriptive-option:hover {
+    background: #f8f2eb;
+    cursor: pointer;
 }

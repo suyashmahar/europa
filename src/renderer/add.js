@@ -7,17 +7,22 @@ const remote = electron.remote
 
 document.getElementById('submit-btn').addEventListener('click', (evt) => {
   // prevent default refresh functionality of forms
-  evt.preventDefault()
+  evt.preventDefault();
 
-  const input = document.getElementById('add-input')
-  
-  ipcRenderer.send('add-todo', input.value)
+  const input = document.getElementById('add-input');
 
-  input.value = ''
+  if (input.value != '') {
+    ipcRenderer.send('add-todo', input.value);
 
-  // Close the window
-  var window = remote.getCurrentWindow();
-  window.close();
+    input.value = '';
+
+    // Close the window
+    var window = remote.getCurrentWindow();
+    window.close();
+  } else {
+    const input = document.getElementById('add-input');
+    input.focus();
+  }
 })
 
 document.getElementById('cancel-btn').addEventListener('click', (evt) => {

@@ -8,19 +8,45 @@
   </head>
 
   <body>
-    <div class="container-fluid">
+    <div class="container">
       <div class="container">
-        <p class="msg">Not implemented yet :(</p>
-        <div class="col-sm">
-          <button id="close-btn" type="submit" class="btn btn-primary float-right">close</button>
+        <div class="container large-header">
+          <h2>Create new server</h2>
+          Choose an option to proceed
         </div>
-    </div>
+        <div class="container descriptive-option" id="beginnerUser">
+          <div class="row">
+            <div class="col-xs-1 my-auto icon-col">
+              <i class="fas fa-play fa-2x fa-fw"></i>
+            </div>
+            <div class="col-xs-11 text-col">
+              <h4>Beginner</h4>
+              I just need local JupyterLab running
+            </div>
+          </div>
+        </div>
+        <div class="container descriptive-option" id="advancedUser">
+          <div class="row">
+            <div class="col-xs-1 my-auto icon-col">
+              <i class="fas fa-cogs fa-2x fa-fw"></i>
+            </div>
+            <div class="col-xs-11 text-col">
+              <h4>Advanced user</h4>
+              I want to make sure everything is right    
+            </div>
+          </div>
+        </div>
+        <div class="need-help-link">
+          <a href="javascript:void">Need help?</a>
+        </div>
+      </div>
     </div>
 
     <script src="./newserver.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/ad56bed05a.js" crossorigin="anonymous"></script>
     <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
   </body>
 
