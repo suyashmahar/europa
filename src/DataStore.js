@@ -25,6 +25,21 @@ class DataStore extends Store {
     return this
   }
 
+  pushFront (url, maxItems) {
+    // Remove any previous recent item with same URL
+    this.todos = this.todos.filter(function(a){return a !== url;});
+    
+    // Append the item
+    this.todos.unshift(url);
+    
+    // Make sure the length is within the maxItems limit
+    while (this.todos.length > maxItems) {
+      this.todos.pop();
+    }
+
+    return this.saveTodos();
+  }
+
   addTodo (todo) {
     // merge the existing todos with the new todo
     this.todos = [ ...this.todos, todo ]

@@ -14,8 +14,8 @@ document.getElementById('submit-btn').addEventListener('click', (evt) => {
   if (input.value != '') {
     ipcRenderer.send('add-recent-url', input.value);
 
-    input.value = '';
-
+    ipcRenderer.send('open-url', input.value);
+    
     // Close the window
     var window = remote.getCurrentWindow();
     window.close();

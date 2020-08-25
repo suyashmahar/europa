@@ -15,6 +15,8 @@ const { spawn } = require('child_process');
 
 require('electron-reload')(process.cwd())
 
+const MAX_RECENT_ITEMS = 4;
+
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' })
 
@@ -209,10 +211,10 @@ function main () {
   })
 
   // add-todo from add todo window
-  ipcMain.on('add-recent-url', (event, todo) => {
-    const updatedTodos = todosData.addTodo(todo).todos
+  ipcMain.on('add-recent-url', (event, url) => {
+    const updatedUrls = todosData.pushFront(url, MAX_RECENT_ITEMS).todos
 
-    mainWindow.send('todos', updatedTodos)
+    mainWindow.send('todos', updatedUrls)
   })
 
   // delete-todo from todo list window

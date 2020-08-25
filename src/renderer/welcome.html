@@ -3,7 +3,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>Jupytron</title>
+    <title>Europa</title>
     <link rel="stylesheet" href="../css/welcome.css">
     <link rel="stylesheet" href="../vendor/bootstrap/bootstrap.min.css">
   </head>
@@ -14,12 +14,31 @@
         <h1>Europa</h1>
         <h3>Jupyter Lab's Moon</h3>
 
-        <div class="main-section">
+        <!-- <div class="main-section">
           <h4 class="section-header">Start</h4>
           <ul class="compact-list">
             <li class="compact-list-item"><a id="newServerBtn" href="javascript:void">New Jupyter server</a></li>
             <li class="compact-list-item"><a id="openUrlBtn" href="javascript:void">Open url...</a></li>
           </ul>
+        </div> -->
+
+        <div class="container transparent-main-section">
+          <div class="row">
+            <div class="col-xs-2 large-btn text-primary" id="newServerBtn">
+              <i class="fas fa-server large-btn-icon fa-fw"></i>
+              <div class="large-btn-txt">New server</div>
+            </div>
+            <div class="col-xs-2 large-btn text-primary">
+              <i class="fas fa-network-wired large-btn-icon fa-fw"></i>
+              <div class="large-btn-txt">New remote<br>server</div>
+            </div>
+            <div class="col-xs-2 large-btn text-primary" id="openUrlBtn">
+              <i class="fas fa-link large-btn-icon fa-fw"></i>
+              <div class="large-btn-txt">Open URL</div>
+            </div>
+            <div class="col-xs-4">
+            </div>
+          </div>
         </div>
         
         <div class="main-section">
@@ -46,6 +65,8 @@
     <script src="../vendor/jquery/jquery-3.5.1.slim.js"></script>
     <script src="../vendor/popper/popper.js"></script>
     <script src="../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
+    <script src="../vendor/bootstrap/bootstrap.min.css"></script>
+    <script src="../vendor/font-awesome/all.js"></script>
     <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
   </body>
 
