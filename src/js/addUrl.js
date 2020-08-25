@@ -12,7 +12,7 @@ document.getElementById('submit-btn').addEventListener('click', (evt) => {
   const input = document.getElementById('add-input');
 
   if (input.value != '') {
-    ipcRenderer.send('add-todo', input.value);
+    ipcRenderer.send('add-recent-url', input.value);
 
     input.value = '';
 

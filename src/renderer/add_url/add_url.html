@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Open a new server</title>
+    <link rel="stylesheet" href="../../vendor/bootstrap-material-design/bootstrap-material-design.css">
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <form id="todoForm">
+        <div class="form-group">
+          <input type="url" class="form-control" id="add-input" placeholder="">
+          <small id="urlHelp" class="form-text text-muted">Example: http://localhost:8888, https://your-domain.tld:1080</small>
+        </div>
+        <div class="col-sm">
+          <button id="submit-btn" type="submit" class="btn btn-primary float-right">open</button>
+          <button id="cancel-btn" type="cancel" class="btn btn-secondary float-right">cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="../../js/addUrl.js"></script>
+    <script src="../../vendor/jquery/jquery-3.5.1.slim.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="../../vendor/popper/popper.js"></script>
+    <script src="../../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
+    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+
+</html>

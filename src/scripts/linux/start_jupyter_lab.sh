@@ -17,8 +17,9 @@ pingSuccess() {
 # Run if the jupyter server fails to start
 pingFailure() {
     local msg="$1"
+    local tempFile="$2"
 
-    echo "Failed: ${msg}"
+    echo "Failed: ${msg}. Log at: ${tempFile}"
     exit 1
 }
 
@@ -29,7 +30,7 @@ parseArgs() {
     portNum="$3"
 
     if [ "$#" != 3 ]; then
-        pingFailure "Wrong number of arguments, check docs."
+        pingFailure "Wrong number of arguments, check docs." "$tempFile"
     fi
 }
 
@@ -39,8 +40,8 @@ watchServer() {
 
     while true; do
         # Check if the process is still alive 
-        if ! kill -0 "$pid"; then
-            pingFailure "Pid $pid exited"
+        if ! kill -0 "$pid" > /dev/null 2>&1; then
+            pingFailure "Command killed" "$tempFile"
         fi
 
         # Check if the tempFile has the url yet

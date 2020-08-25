@@ -5,6 +5,12 @@ const electron = require('electron')
 const remote = electron.remote;
 const app = remote.app;
 
+const InputElement = {
+    PY_INTER: 1,
+    INIT_DIR: 2,
+    PORT_NUM: 3,
+}
+
 function updateUI(pythonInterpreterPath) {
     console.log(pythonInterpreterPath);
     document.getElementById('pythonInterpreterPath').value = pythonInterpreterPath;
@@ -22,13 +28,13 @@ function getAndUpdateJLabCfg() {
 
 function focusFieldWithError(fieldId) {
     switch (fieldId) {
-        case 1:
+        case InputElement.PY_INTER:
             document.getElementById('pythonInterpreterPath').focus();
             break;
-        case 2:
+        case InputElement.INIT_DIR:
             document.getElementById('initialPath').focus();
             break;
-        case 2:
+        case InputElement.PORT_NUM:
             document.getElementById('portNum').focus();
             break;
         default:
@@ -41,7 +47,7 @@ function displayMsg(type, msg) {
     var resultElem = document.getElementById('resultBox');
     if (type == 'error') {
         console.error(msg);
-        resultElem.innerHTML = `<a class="text-warning"><i class="fas fa-exclamation-circle"></i> ${msg}</a>`
+        resultElem.innerHTML = `<a class="text-danger"><i class="fas fa-exclamation-circle"></i> ${msg}</a>`
     } else if (type == 'info') {
         console.info(msg);
         resultElem.innerHTML = `<a class="text-success"><i class="fas fa-info-circle"></i> ${msg}</a>`
@@ -52,19 +58,33 @@ function displayMsg(type, msg) {
 // [1-] = First field id that is wrong
 function checkValues() {
     var result = 0;
-
+    
     // Check the port number
     var portNumStr = document.getElementById('portNum').value;
     var portNum = parseInt(portNumStr);
-
-    if (isNaN(portNum) || portNum > 65535) {
+    
+    if ((isNaN(portNum) || portNum > 65535) && portNumStr) {
         console.warn('Cannot parse port number: ' + portNumStr);
         displayMsg('error', `Port number ${portNumStr} is invalid.`);
-        result = 3;
-    } else {
-        console.log('using port ' + portNumStr + ' ' + portNum.toString());
+        result = InputElement.PORT_NUM;
     }
-
+    
+    // Check the path to inital directory
+    var startAt = document.getElementById('initialPath').value;
+    if (!startAt) {
+        console.warn('Initial directory not provided')
+        displayMsg('error', `Path to initial directory is invalid.`);
+        result = InputElement.INIT_DIR;
+    }
+    
+    // Check the path to python interpreter
+    var startAt = document.getElementById('pythonInterpreterPath').value;
+    if (!startAt) {
+        console.warn('Path to python interpreter not provided')
+        displayMsg('error', `Path to python interpreter is empty.`);
+        result = InputElement.PY_INTER;
+    }
+    
     return result;
 }
 
@@ -78,33 +98,40 @@ function startServer() {
     if (retVal != 0) {
         focusFieldWithError(retVal);
     } else {
-        displayMsg('info', 'Everything looks good');
+        displayMsg('info', '');
+        
+        var py          = document.getElementById('pythonInterpreterPath').value;
+        var startDir    = document.getElementById('initialPath').value;
+        var portNum     = document.getElementById('portNum').value;
+
+        if (!portNum) {
+            portNum = 'auto'
+        }
+        
+        ipcRenderer.send('start-server', py, startDir, portNum);
+        
+        // Hide the contents
+        setVisible('advanced-config-container', 0);
+        setVisible('loadingSpinner', 1);
     }
-    
-    var py          = document.getElementById('pythonInterpreterPath').value;
-    var startDir    = document.getElementById('initialPath').value;
-    var portNum     = document.getElementById('portNum').value;
-
-    ipcRenderer.send('start-server', py, startDir, portNum);
-
-    // Hide the contents
-    setVisible('advanced-config-container', 0);
-    setVisible('loadingSpinner', 1);
 }
 
 function startServerResp(event, result) {
     console.log(`start-server result: ${result}`);
     setVisible('advanced-config-container', 1);
     setVisible('loadingSpinner', 0);
-    displayMsg('info', `Got: ${result}`);
-
-    if (result != 'Failed') {
+    
+    if (String(result).startsWith('Failed')) {
+        displayMsg('error', `${result}`);
+    } else {
+        displayMsg('info', `Got: ${result}`);
         var url = String(result)
-
+        
         // trim white spaces
         url = url.replace(/(^[ '\^\$\*#&]+)|([ '\^\$\*#&]+$)/g, '')
         
         if (url) {
+            ipcRenderer.send('open-recent-url', url);
             ipcRenderer.send('open-url', url);
             var window = remote.getCurrentWindow();
             window.close();

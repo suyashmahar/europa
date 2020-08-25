@@ -5,12 +5,11 @@ const { ipcRenderer, shell } = require('electron')
 // delete todo by its text value ( used below in event listener)
 const recentItemClicked = (e) => {
   console.log(e.target.textContent);
-  // ipcRenderer.send('delete-todo', e.target.textContent)
   ipcRenderer.send('open-url', e.target.textContent);
 }
 const deleteRecentItemClicked = (e) => {
   console.log(e.target.getAttribute('id'));
-  ipcRenderer.send('delete-todo', e.target.getAttribute('id'))
+  ipcRenderer.send('delete-recent-item', e.target.getAttribute('id'))
 }
 
 document.getElementById('openUrlBtn').addEventListener('click', () => {

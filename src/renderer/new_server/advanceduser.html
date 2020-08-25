@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>Create new server</title>
-        <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-        <link rel="stylesheet" href="newserver.css">
+        <link rel="stylesheet" href="../../vendor/bootstrap-material-design/bootstrap-material-design.css">
+        <link rel="stylesheet" href="../../css/newserver.css">
     </head>
 
     <div id="loadingSpinner">
@@ -41,7 +41,7 @@
             </div>
 
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Port number (number or 'auto')" aria-label="Recipient's username" aria-describedby="basic-addon2" id="portNum">
+                <input type="text" class="form-control" placeholder="Port number (optional)" aria-label="Recipient's username" aria-describedby="basic-addon2" id="portNum">
                 <div class="input-group-append form-inline-link-div">
                     <a class="form-inline-link" href="javascript:void" id="portNumBtn"></a>
                 </div>
@@ -58,20 +58,18 @@
         </div>
 
         <div class="result-box">
-            <a id='resultBox'>
-                All good
-            </a>
+            <a id='resultBox'></a>
         </div>
 
         <div class="need-help-link">
             <a href="javascript:void">Need help?</a>
         </div>
 
-        <script src="./advanceduser.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
-        <script src="https://kit.fontawesome.com/ad56bed05a.js" crossorigin="anonymous"></script>
+        <script src="../../js/advancedUser.js"></script>
+        <script src="../../vendor/jquery/jquery-3.5.1.slim.js"></script>
+        <script src="../../vendor/popper/popper.js"></script>
+        <script src="../../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
+        <script src="../../vendor/font-awesome/all.js"></script>
         <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
   </body>
 

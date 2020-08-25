@@ -82,7 +82,7 @@ function startServerOS(event, py, startAt, portNum) {
 
 function main () {
   let mainWindow = new Window({
-    file: path.join('renderer', 'index.html')
+    file: path.join('renderer', 'welcome.html')
   })
 
   // add todo window
@@ -117,7 +117,7 @@ function main () {
     if (!addTodoWin) {
       // create a new add todo window
       addTodoWin = new Window({
-        file: path.join('renderer', 'add.html'),
+        file: path.join('renderer', 'add_url', 'add_url.html'),
         width: 500,
         height: 120,
 
@@ -166,7 +166,7 @@ function main () {
 
   // create add todo window
   ipcMain.on('open-url', (e, url) => {
-    console.log(`main.js:174 Opening URL: ${url}`)
+    console.log(`Opening URL: ${url}`)
 
     // Create a title for the new window
     var windowTitle = 'Europa @ '.concat(url.substring(0, 100));
@@ -205,19 +205,18 @@ function main () {
     // Register shortcuts
     electronLocalshortcut.register(newJupyterWin, 'Ctrl+Shift+W', () => {
       newJupyterWin.close();
-      console.log('You pressed ctrl+shift+w');
     });
   })
 
   // add-todo from add todo window
-  ipcMain.on('add-todo', (event, todo) => {
+  ipcMain.on('add-recent-url', (event, todo) => {
     const updatedTodos = todosData.addTodo(todo).todos
 
     mainWindow.send('todos', updatedTodos)
   })
 
   // delete-todo from todo list window
-  ipcMain.on('delete-todo', (event, todo) => {
+  ipcMain.on('delete-recent-url', (event, todo) => {
     const updatedTodos = todosData.deleteTodo(todo).todos
 
     mainWindow.send('todos', updatedTodos)
