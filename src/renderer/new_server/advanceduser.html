@@ -7,8 +7,20 @@
         <link rel="stylesheet" href="newserver.css">
     </head>
 
+    <div id="loadingSpinner">
+        <div class="loading-spinner-container">
+            <div class="animate_loader_wrapper">
+                <div class="animate_loader">
+                    <svg class="circular" viewBox="25 25 50 50">
+                    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" />
+                    </svg>
+                </div><!-- END animate_loader -->
+            </div><!-- END animate_loader_wrapper -->
+        </div>
+        <div class="loading-spinner-text">Starting server...</div>
+    </div>
     <body>
-        <div class="container">
+        <div class="container" id="advanced-config-container">
             <div class="container large-header" id="advanced-config-header">
                 <a class="back-btn" href="javascript:void" id="backBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
                 <h2 id="advanced-config-header-txt">Advanced configuration</h2>

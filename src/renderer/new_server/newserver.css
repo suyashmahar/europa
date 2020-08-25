@@ -2,6 +2,26 @@ body {
     background-color: #fffbf6 !important;
 }
 
+#loadingSpinner {
+    display: none;
+}
+
+.loading-spinner-container {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.loading-spinner-text {
+    margin: 0;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .need-help-link {
     font-size: small;
     text-align: right;
@@ -118,4 +138,72 @@ body {
     opacity: 1;
     background: #f8f2eb;
     cursor: pointer;
+}
+
+/* CSS for loading spinner */
+
+.animate_loader {
+    /* background: #fff; */
+    /* border-radius: 60px; */
+    /* box-shadow: 0 2px 8px rgba(0,0,0,.2); */
+    margin: -5px auto;
+    padding-bottom: 55px;
+    width: 50px;
+}
+ 
+.animate_loader:before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+}
+ 
+.animate_loader .circular {
+    animation: rotate 2s linear infinite;
+    height: 100%;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+ 
+.animate_loader .path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+    stroke-linecap: round;
+}
+ 
+@keyframes rotate{
+    100%{
+        transform: rotate(360deg);
+    }
+}
+ 
+@keyframes dash{
+    0%{
+        stroke-dasharray: 1,200;
+        stroke-dashoffset: 0;
+    }
+    50%{
+        stroke-dasharray: 89,200;
+        stroke-dashoffset: -35;
+    }
+    100%{
+        stroke-dasharray: 89,200;
+        stroke-dashoffset: -124;
+    }
+}
+ 
+@keyframes color{
+    100%, 0%{
+        stroke: #9c0;
+    }
+    50%{
+        stroke: #9c0;
+        /* stroke: #FF9300; */
+    }
 }

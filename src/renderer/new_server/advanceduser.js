@@ -68,6 +68,11 @@ function checkValues() {
     return result;
 }
 
+function setVisible(selector, visible) {
+    // console.log(document.getElementById(selector).style.display)
+    document.getElementById(selector).style.display = visible ? 'block' : 'none';
+}
+
 function startServer() {
     var retVal = checkValues();
     if (retVal != 0) {
@@ -75,7 +80,39 @@ function startServer() {
     } else {
         displayMsg('info', 'Everything looks good');
     }
+    
+    var py          = document.getElementById('pythonInterpreterPath').value;
+    var startDir    = document.getElementById('initialPath').value;
+    var portNum     = document.getElementById('portNum').value;
+
+    ipcRenderer.send('start-server', py, startDir, portNum);
+
+    // Hide the contents
+    setVisible('advanced-config-container', 0);
+    setVisible('loadingSpinner', 1);
 }
+
+function startServerResp(event, result) {
+    console.log(`start-server result: ${result}`);
+    setVisible('advanced-config-container', 1);
+    setVisible('loadingSpinner', 0);
+    displayMsg('info', `Got: ${result}`);
+
+    if (result != 'Failed') {
+        var url = String(result)
+
+        // trim white spaces
+        url = url.replace(/(^[ '\^\$\*#&]+)|([ '\^\$\*#&]+$)/g, '')
+        
+        if (url) {
+            ipcRenderer.send('open-url', url);
+            var window = remote.getCurrentWindow();
+            window.close();
+        }
+    }
+}
+
+ipcRenderer.on('start-server-resp', startServerResp);
 
 document.getElementById('backBtn').addEventListener('click', (evt) => {
     var window = remote.getCurrentWindow();
@@ -94,4 +131,3 @@ document.getElementById('submitBtn').addEventListener('click', (evt) => {
 document.getElementById('refillBtn').addEventListener('click', (evt) => {
     getAndUpdateJLabCfg();
 })
-    
