@@ -38,21 +38,23 @@ document.getElementById('helpKeyboardShortcuts').addEventListener('click', () =>
 
 https://github.com/suyashmahar/jupytron/wiki
 
-// on receive todos
-ipcRenderer.on('todos', (event, todos) => {
-  // get the todoList ul
-  const todoList = document.getElementById('todoList')
+ipcRenderer.on('todos', (event, recentItemsList) => {
+  const recentUrlElem = document.getElementById('todoList');
 
-  // create html string
-  const todoItems = todos.reduce((html, todo) => {
-    var itemDeleteBtnHtml = `<a id="${todo}" href="javascript:void" class="inline-btn-link-delete">✕</a>`
-    html += `<li class="recent-item"><a class="recent-item-link" href="javascript:void" id="${todo}">${todo}</a>${itemDeleteBtnHtml}</li>`
+  // create an html string
+  var recentUrlHtml = recentItemsList.reduce((html, item) => {
+    var itemDeleteBtnHtml = `<a id="${item}" href="javascript:void" class="inline-btn-link-delete">✕</a>`
+    html += `<li class="recent-item"><a class="recent-item-link" href="javascript:void" id="${item}">${item}</a>${itemDeleteBtnHtml}</li>`
 
-    return html
+    return html;
   }, '')
 
+  if (!recentUrlHtml) {
+    recentUrlHtml = "No recent items";
+  }
+
   // set list html to the todo items
-  todoList.innerHTML = todoItems
+  recentUrlElem.innerHTML = recentUrlHtml;
 
   // Add click handlers to the link
   todoList.querySelectorAll('.recent-item-link').forEach(item => {

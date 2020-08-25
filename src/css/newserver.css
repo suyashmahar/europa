@@ -128,9 +128,10 @@ body {
 }
 
 .descriptive-option {
-    opacity: 0.8;
+    /* opacity: 0.8; */
     padding-top: 2%;
     padding-bottom: 2%;
+    padding-left: 5%;
     height: 20%;
 }
 

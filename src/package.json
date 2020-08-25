@@ -13,7 +13,7 @@
     "JupyterLab",
     "Jupyter"
   ],
-  "license": "AGPLv3",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^3.0.4",
@@ -27,6 +27,9 @@
     "spectre.css": "^0.5.3"
   },
   "build": {
+    "directories": {
+      "output": "../build/"
+    },
     "appId": "com.suyashmahar.europa",
     "mac": {
       "category": "Utilities"

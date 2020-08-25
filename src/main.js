@@ -87,6 +87,10 @@ function main () {
     file: path.join('renderer', 'welcome.html')
   })
 
+  // Hide menu bars
+  mainWindow.setMenu(null)
+  mainWindow.setAutoHideMenuBar(true)
+
   // add todo window
   let addTodoWin
   let newJupyterWin
@@ -156,8 +160,8 @@ function main () {
       })
 
       // Disable menu bar
-      // newServerDialog.setMenu(null)
-      // newServerDialog.setAutoHideMenuBar(true)
+      newServerDialog.setMenu(null)
+      newServerDialog.setAutoHideMenuBar(true)
 
       // cleanup
       newServerDialog.on('closed', () => {
