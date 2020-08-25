@@ -30,58 +30,53 @@ function getPythonInterpreter() {
   return result;
 }
 
+// Monitor the started child process for starting jupyter lab server
+function monitorStartServerChild(event, child) {
+  child.stdout.on("data", function(data) {
+    if (data) {
+      event.sender.send('start-server-resp', data);
+    }
+    console.log("Shell Data: " + data);
+  });
+  child.stderr.on("data", function(data){
+    if (data) {
+      event.sender.send('start-server-resp', data);
+    }
+    console.log("Shell Errors: " + data);
+  });
+
+  console.log(`Child.killed = ${child.killed}`)
+}
+
+function startServerWindows(event, py, startAt, portNum) {
+  var cwd = process.cwd();
+  var scriptPath = path.join(cwd, 'scripts', 
+    'windows', 'start_jupyter_lab.ps1');
+    
+    // Execute the command async
+    var child = spawn("powershell.exe", [scriptPath, `${py} ${startAt} ${portNum}`]);
+    monitorStartServerChild(event, child);
+}
+
+function startServerLinux(event, py, startAt, portNum) {
+  var cwd = process.cwd();
+  var scriptPath = path.join(cwd, 'scripts', 
+    'linux', 'start_jupyter_lab.sh');
+    
+    // Execute the command async
+    var child = spawn("sh", [scriptPath, py, startAt, portNum]);
+    console.log(`Running: sh ${scriptPath} ${py} ${startAt} ${portNum}`)
+    monitorStartServerChild(event, child);
+}
+
 // Runs OS specific script to start a jupyter lab server
 function startServerOS(event, py, startAt, portNum) {
   if (process.platform === "win32") {
-    var cwd = process.cwd();
-    var scriptPath = path.join(cwd, 'scripts', 
-      'windows', 'start_jupyter_lab.ps1');
-      
-      var cmd = `powershell.exe "${scriptPath}" "${py} ${startAt} ${portNum}"`;
-      cmd = `powershell.exe '${scriptPath}' ${py} ${startAt} ${portNum}`
-      // Execute the command async
-    // console.log(`Cmd: ${cmd}`);
-    // var child = exec(cmd, (error, stdout, stderr) => { 
-    //   var result;
-    //   if (error) {
-    //     result = 'Failed'
-    //     console.log('Error message:')
-    //     console.error(stderr)
-    //   } else {
-    //     result = stdout
-    //   }
-
-    //   console.log(`result: ${result}`)
-    //   event.sender.send('start-server-resp', result);
-    // });
-
-    var child = spawn("powershell.exe", [scriptPath, `${py} ${startAt} ${portNum}`])
-    child.stdout.on("data",function(data){
-      if (data) {
-        event.sender.send('start-server-resp', data);
-      }
-      console.log("Powershell Data: " + data);
-    });
-    child.stderr.on("data",function(data){
-      if (data) {
-        event.sender.send('start-server-resp', data);
-      }
-      console.log("Powershell Errors: " + data);
-    });
-
-    console.log(`Child.killed = ${child.killed}`)
-    
-    // console.log(`params: ${[`'${scriptPath}' ${params}`]}`)
-    // const childProcess = spawn(
-    //   'powershell.exe', [`'${scriptPath}' ${params}`], {
-    //     detached: true,
-    //     // stdio: [ 'ignore', 1, 2 ]
-    //   });
-      
-    //   childProcess.stdout.on('data', (data) => {
-    //     event.sender.send('start-server-resp', data);
-    //     childProcess.unref();
-    // });
+    startServerWindows(event, py, startAt, portNum);
+  } else if (process.platform === "linux") {
+    startServerLinux(event, py, startAt, portNum);  
+  } else {
+    console.error("Unsupported platform " + process.platform);
   }
 }
 
