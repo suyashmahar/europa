@@ -40,7 +40,8 @@
     },
     "win": {
       "target": ["nsis"]
-    }
+    },
+    "icon": "assets/img/europa_logo.png"
   },
   "scripts": {
     "pack": "electron-builder --dir",

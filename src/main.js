@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const url = require('url')
 const { app, electron, ipcMain, BrowserWindow } = require('electron')
 
 const Window = require('./Window')
@@ -15,7 +16,13 @@ require('electron-reload')(process.cwd())
 const MAX_RECENT_ITEMS = 4;
 
 // create a new todo store name "Todos Main"
-const todosData = new DataStore({ name: 'Todos Main' })
+const todosData = new DataStore({ name: 'Todos Main' });
+const iconPath = path.join(__dirname, 'assets', 'img', 'europa_logo.png');
+const iconUrl = url.format({
+  pathname: iconPath,
+  protocol: 'file:',
+  slashes: true
+})
 
 function getPythonInterpreter() {
   var result = undefined;
@@ -80,13 +87,15 @@ function startServerOS(event, py, startAt, portNum) {
 }
 
 function main () {
+  console.log(iconUrl);
   let mainWindow = new Window({
+    icon: iconUrl,
     file: path.join('renderer', 'welcome.html')
   })
 
   // Hide menu bars
-  // mainWindow.setMenu(null)
-  // mainWindow.setAutoHideMenuBar(true)
+  mainWindow.setMenu(null)
+  mainWindow.setAutoHideMenuBar(true)
 
   // add todo window
   let addTodoWin
@@ -123,14 +132,15 @@ function main () {
         file: path.join('renderer', 'add_url', 'add_url.html'),
         width: 500,
         height: 120,
+        icon: iconUrl,
 
         // close with the main window
         parent: mainWindow
       })
 
       // Disable menu bar
-      // addTodoWin.setMenu(null)
-      // addTodoWin.setAutoHideMenuBar(true)
+      addTodoWin.setMenu(null)
+      addTodoWin.setAutoHideMenuBar(true)
 
       // cleanup
       addTodoWin.on('closed', () => {
@@ -153,12 +163,13 @@ function main () {
         minWidth: 600,
         minHeight: 450,
         // close with the main window
-        parent: mainWindow
+        parent: mainWindow,
+        icon: iconUrl,
       })
 
       // Disable menu bar
-      // newServerDialog.setMenu(null)
-      // newServerDialog.setAutoHideMenuBar(true)
+      newServerDialog.setMenu(null)
+      newServerDialog.setAutoHideMenuBar(true)
 
       // cleanup
       newServerDialog.on('closed', () => {
@@ -184,8 +195,10 @@ function main () {
       webPreferences: {
         nodeIntegration: false
       },
+      icon: iconUrl,
       title: windowTitle
     })
+
     newJupyterWin.loadURL(url);
 
     // Disable menu bar
@@ -211,21 +224,12 @@ function main () {
     });
   })
 
-  // add-todo from add todo window
   ipcMain.on('add-recent-url', (event, url) => {
     const updatedUrls = todosData.pushFront(url, MAX_RECENT_ITEMS).todos
 
     mainWindow.send('todos', updatedUrls)
   })
 
-  // ipcMain.on('selectDirectory', (event, callbackName) => {
-  //     var dir = electron.dialog.showOpenDialog(mainWindow, {
-  //         properties: ['openDirectory']
-  //     });
-  //     event.send(callbackName, dir)
-  // });
-
-  // delete-todo from todo list window
   ipcMain.on('delete-recent-url', (event, todo) => {
     const updatedTodos = todosData.deleteTodo(todo).todos
 
