@@ -16,6 +16,7 @@ const defaultProps = {
 
 class Window extends BrowserWindow {
   constructor ({ file, ...windowSettings }) {
+    console.log(windowSettings)
     // calls new BrowserWindow with these props
     super({ ...defaultProps, ...windowSettings })
 

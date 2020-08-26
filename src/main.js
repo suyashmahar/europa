@@ -3,6 +3,7 @@
 const path = require('path')
 const url = require('url')
 const { app, electron, ipcMain, BrowserWindow } = require('electron')
+const os = require('os');
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
@@ -17,12 +18,7 @@ const MAX_RECENT_ITEMS = 4;
 
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' });
-const iconPath = path.join(__dirname, 'assets', 'img', 'europa_logo.png');
-const iconUrl = url.format({
-  pathname: iconPath,
-  protocol: 'file:',
-  slashes: true
-})
+var iconPath;
 
 function getPythonInterpreter() {
   var result = undefined;
@@ -86,11 +82,23 @@ function startServerOS(event, py, startAt, portNum) {
   }
 }
 
+function setupIcons() {
+  if (os.platform() === 'win32') {
+    iconPath = path.join(__dirname, 'assets', 'img', 'europa_logo.ico');
+  } else if (os.platform() == 'linux') {
+    iconPath = path.join(__dirname, 'assets', 'img', 'europa_logo.png');
+  } else if (os.platform() === 'darwin') {
+    iconPath = path.join(__dirname, 'assets', 'img', 'europa_logo.icns');
+  } else {
+    console.warn(`Platform ${os.platform()} has not icon set.`)
+  }
+}
+
 function main () {
-  console.log(iconUrl);
+  setupIcons();
   let mainWindow = new Window({
-    icon: iconUrl,
-    file: path.join('renderer', 'welcome.html')
+    file: path.join('renderer', 'welcome.html'),
+    icon: iconPath
   })
 
   // Hide menu bars
@@ -132,7 +140,7 @@ function main () {
         file: path.join('renderer', 'add_url', 'add_url.html'),
         width: 500,
         height: 120,
-        icon: iconUrl,
+        icon: iconPath,
 
         // close with the main window
         parent: mainWindow
@@ -164,7 +172,7 @@ function main () {
         minHeight: 450,
         // close with the main window
         parent: mainWindow,
-        icon: iconUrl,
+        icon: iconPath,
       })
 
       // Disable menu bar
@@ -195,7 +203,7 @@ function main () {
       webPreferences: {
         nodeIntegration: false
       },
-      icon: iconUrl,
+      icon: iconPath,
       title: windowTitle
     })
 
