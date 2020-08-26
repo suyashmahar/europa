@@ -27,30 +27,39 @@
             </div>
 
             <div class="input-group mb-3">
+                <div class="input-group-prepend form-inline-icon">
+                    <i class="fab fa-python fa-2x text-secondary fa-fw"></i>
+                </div>
                 <input type="text" class="form-control" placeholder="Path to python interpreter" aria-label="Recipient's username" aria-describedby="basic-addon2" id="pythonInterpreterPath">
-                <div class="input-group-append form-inline-link-div">
+                <!-- <div class="input-group-append form-inline-link-div">
                     <a class="form-inline-link" href="javascript:void" id="pythonInterpreterPathBtn"><i class="fas fa-search"></i></a>
-                </div>
+                </div> -->
             </div>
 
             <div class="input-group mb-3">
+                <div class="input-group-prepend form-inline-icon">
+                    <i class="fas fa-home fa-2x text-secondary fa-fw"></i>
+                </div>
                 <input type="text" class="form-control" placeholder="Path to initial directory" aria-label="Recipient's username" aria-describedby="basic-addon2" id="initialPath">
-                <div class="input-group-append form-inline-link-div">
+                <!-- <div class="input-group-append form-inline-link-div">
                     <a class="form-inline-link" href="javascript:void" id="initialPathBtn"><i class="fas fa-search"></i></a>
-                </div>
+                </div> -->
             </div>
 
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Port number (optional)" aria-label="Recipient's username" aria-describedby="basic-addon2" id="portNum">
-                <div class="input-group-append form-inline-link-div">
-                    <a class="form-inline-link" href="javascript:void" id="portNumBtn"></a>
+                <div class="input-group-prepend form-inline-icon">
+                    <i class="fas fa-network-wired fa-2x text-secondary fa-fw"></i>
                 </div>
+                <input type="text" class="form-control" placeholder="Port number (optional)" aria-label="Recipient's username" aria-describedby="basic-addon2" id="portNum">
+                <!-- <div class="input-group-append form-inline-link-div">
+                    <a class="form-inline-link" href="javascript:void" id="portNumBtn"></a>
+                </div> -->
             </div>
             
             <a class="refill-btn" href="javascript:void" id="refillBtn"><i class="fas fa-redo refill-btn-txt"></i></a>
-            <a class="refill-btn-tool-tip text-primary">rescan</a>
+            <a class="refill-btn-tool-tip text-primary">autofill</a>
             
-            <div class="col-sm advanced-config-btn-grp">
+            <div class="col-sm config-btn-grp">
                 <button id="submitBtn" type="submit" class="btn btn-primary float-right">start</button>
                 <button id="cancelBtn" type="cancel" class="btn btn-secondary float-right">cancel</button>
             </div>

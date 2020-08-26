@@ -1,17 +1,14 @@
 'use strict'
 
 const path = require('path')
-const { app, ipcMain, BrowserWindow } = require('electron')
+const { app, electron, ipcMain, BrowserWindow } = require('electron')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 const electronLocalshortcut = require('electron-localshortcut');
 const commandExists = require('command-exists');
 const { execSync } = require('child_process')
-const { Server } = require('http')
-const { exec } = require('child_process');
 const { spawn } = require('child_process');
-// var spawn = require("child_process").spawn,child;
 
 require('electron-reload')(process.cwd())
 
@@ -88,8 +85,8 @@ function main () {
   })
 
   // Hide menu bars
-  mainWindow.setMenu(null)
-  mainWindow.setAutoHideMenuBar(true)
+  // mainWindow.setMenu(null)
+  // mainWindow.setAutoHideMenuBar(true)
 
   // add todo window
   let addTodoWin
@@ -132,8 +129,8 @@ function main () {
       })
 
       // Disable menu bar
-      addTodoWin.setMenu(null)
-      addTodoWin.setAutoHideMenuBar(true)
+      // addTodoWin.setMenu(null)
+      // addTodoWin.setAutoHideMenuBar(true)
 
       // cleanup
       addTodoWin.on('closed', () => {
@@ -160,8 +157,8 @@ function main () {
       })
 
       // Disable menu bar
-      newServerDialog.setMenu(null)
-      newServerDialog.setAutoHideMenuBar(true)
+      // newServerDialog.setMenu(null)
+      // newServerDialog.setAutoHideMenuBar(true)
 
       // cleanup
       newServerDialog.on('closed', () => {
@@ -220,6 +217,13 @@ function main () {
 
     mainWindow.send('todos', updatedUrls)
   })
+
+  // ipcMain.on('selectDirectory', (event, callbackName) => {
+  //     var dir = electron.dialog.showOpenDialog(mainWindow, {
+  //         properties: ['openDirectory']
+  //     });
+  //     event.send(callbackName, dir)
+  // });
 
   // delete-todo from todo list window
   ipcMain.on('delete-recent-url', (event, todo) => {

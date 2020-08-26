@@ -8,7 +8,10 @@ const remote = electron.remote
 
 document.getElementById('advancedUser').addEventListener('click', (evt) => {
   var filePath = path.join('renderer', 'new_server', 'advanceduser.html');
-  console.log(filePath);
+  remote.getCurrentWindow().loadFile(filePath);
+})
+document.getElementById('beginnerUser').addEventListener('click', (evt) => {
+  var filePath = path.join('renderer', 'new_server', 'beginneruser.html');
   remote.getCurrentWindow().loadFile(filePath);
 })
 

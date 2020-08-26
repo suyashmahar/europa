@@ -29,6 +29,7 @@ body {
 
   display: flex;
   align-items: center;
+  margin-bottom: 0 !important;
 }
 
 .compact-list {
@@ -80,6 +81,6 @@ body {
 
 .large-btn-txt {
   margin-top: 5%;
-  font-size: 1em !important;
+  font-size: 1.5em !important;
   height: 3em;
 }

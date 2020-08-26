@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Create new server</title>
+        <link rel="stylesheet" href="../../vendor/bootstrap-material-design/bootstrap-material-design.css">
+        <link rel="stylesheet" href="../../css/newserver.css">
+    </head>
+
+    <div id="loadingSpinner">
+        <div class="loading-spinner-container">
+            <div class="animate_loader_wrapper">
+                <div class="animate_loader">
+                    <svg class="circular" viewBox="25 25 50 50">
+                    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" />
+                    </svg>
+                </div><!-- END animate_loader -->
+            </div><!-- END animate_loader_wrapper -->
+        </div>
+        <div class="loading-spinner-text">Starting server...</div>
+    </div>
+    <body>
+        <div class="container" id="beg-config-container">
+            <div class="container large-header" id="beg-config-header">
+                <a class="back-btn" href="javascript:void" id="backBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
+                <h2 id="beg-config-header-txt">Simple config</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-1">
+                    <i class="fas fa-home fa-2x text-secondary fa-fw align-bottom"></i>
+                </div>
+                <div class="col">
+                    <div class="text-secondary" id="begInputHelpTxt">Choose a directory to start jupyter lab at</div>
+                    <input type="text" class="mx-sm-2 mb-2 form-control no-bottom-spacing" placeholder="Directory to open" aria-label="Recipient's username" aria-describedby="basic-addon2" id="startDir">
+                </div>
+            </div>
+
+            <div class="row justify-content-end">
+                <button type="button" id="chooseDir" class="btn btn-primary mb-2"><i class="fas fa-folder-plus"></i>  Choose</button>
+            </div>
+
+            <div id="begInfoBox">
+            </div>
+            
+            <div class="row justify-content-end">
+                <button id="cancelBtn" type="cancel" class="btn btn-secondary">cancel</button>
+                <button id="submitBtn" type="submit" class="btn btn-primary">start</button>
+            </div>
+      
+        </div>
+
+        <div class="row">    
+            <div class="col-8 need-help-link">
+                <a href="javascript:void">Need help?</a>
+            </div>
+        </div>
+
+        <script src="../../js/begUser.js"></script>
+        <script src="../../vendor/jquery/jquery-3.5.1.slim.js"></script>
+        <script src="../../vendor/popper/popper.js"></script>
+        <script src="../../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
+        <script src="../../vendor/font-awesome/all.js"></script>
+        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+
+</html>

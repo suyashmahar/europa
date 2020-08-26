@@ -57,10 +57,20 @@ body {
     padding-right: 3%;
 }
 
+#choose-startdir-btn {
+    float: right;
+}
+
+#simple-config-alert-close-btn {
+    float: right;
+}
+
 .refill-btn {
+    display: inline-block;
     margin-left: 0;
     padding-left: 0;
     margin-right: 1%;
+    margin-top: 1%;
     /* float: right; */
 }
 
@@ -80,9 +90,12 @@ body {
 .refill-btn-tool-tip {
 }
 
-.advanced-config-btn-grp {
+/* #beg-config-alert-box {} */
+
+.config-btn-grp {
     display: inline;
     margin-top: 7%;
+    margin-bottom: 10%;
 }
 
 .form-inline-link-div {
@@ -91,16 +104,44 @@ body {
     justify-content: center;
 }
 
-.form-inline-link {
+.form-inline-icon {
+    /* width: 8%; */
+    margin: 2%;
+    margin-left: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.align-bottom {
+    position: absolute;
+    bottom: 10%;
+}
+
+#begInfoBox {
+    /* vertical-align: middle; */
+    /* line-height: 16vh; */
+    height: 16vh;
+    overflow-y: auto;
+    word-wrap: break-word ;
+    margin-bottom: 1%;
+    margin-left: 8.33vw;
+    /* margin-top: 20%; */
+}
+
+#begInputHelpTxt {
+    margin-left: 1.5%;
+}
+
+.no-bottom-spacing {
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
-#advanced-config-header {
+#advanced-config-header, #beg-config-header {
     padding-bottom: 10%;
 }
 
-#advanced-config-header-txt {
+#advanced-config-header-txt, #beg-config-header-txt {
     display: inline;
 }
 
