@@ -3,7 +3,7 @@ const { shell, ipcRenderer, remote } = require('electron');
 const winDecorations = require('../../js/modules/winDecorations');
 
 var callbackName = undefined;
-var callerEvent = undefined;
+var dialogId = undefined;
 var window = remote.getCurrentWindow();
 
 const ICON_HTML_MAP = {
@@ -55,12 +55,12 @@ function setupUI(properties) {
 
 function main() {
     document.getElementById('btnPrimary').addEventListener('click', (evt) => {
-        ipcRenderer.send('dialog-result', callbackName, 'primary');
+        ipcRenderer.send('dialog-result', dialogId, 'primary');
         window.close();
     })
 
     document.getElementById('btnSecondary').addEventListener('click', (evt) => {
-        ipcRenderer.send('dialog-result', callbackName, 'primary');
+        ipcRenderer.send('dialog-result', dialogId, 'primary');
         window.close();
     })
 
@@ -76,7 +76,7 @@ function main() {
      */
     ipcRenderer.on('construct', (event, properties, callbackName) => {
         console.log(`Got: ${JSON.stringify(properties)}, ${callbackName}`);
-        callerEvent = event;
+        dialogId = callbackName;
         resultCallback = callbackName;
         setupUI(properties);
     })

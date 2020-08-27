@@ -363,6 +363,7 @@ function main () {
   })
 
   ipcMain.on('dialog-result', (event, id, resp) => {
+    console.log(`${id}, ${resp}`)
     dialogRespTracker[id](resp);
   });
 }
