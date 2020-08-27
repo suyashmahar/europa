@@ -2,6 +2,9 @@
 
 const { ipcRenderer } = require('electron')
 const electron = require('electron')
+
+const winDecorations = require('../../js/modules/winDecorations');
+
 const remote = electron.remote;
 const app = remote.app;
 
@@ -89,7 +92,6 @@ function checkValues() {
 }
 
 function setVisible(selector, visible) {
-    // console.log(document.getElementById(selector).style.display)
     document.getElementById(selector).style.display = visible ? 'block' : 'none';
 }
 
@@ -139,22 +141,29 @@ function startServerResp(event, result) {
     }
 }
 
-ipcRenderer.on('start-server-resp', startServerResp);
+function main() {
 
-document.getElementById('backBtn').addEventListener('click', (evt) => {
-    var window = remote.getCurrentWindow();
-    window.webContents.goBack();
-})
+    ipcRenderer.on('start-server-resp', startServerResp);
 
-document.getElementById('cancelBtn').addEventListener('click', (evt) => {
-    var window = remote.getCurrentWindow();
-    window.close();
-})
+    document.getElementById('backBtn').addEventListener('click', (evt) => {
+        var window = remote.getCurrentWindow();
+        window.webContents.goBack();
+    })
 
-document.getElementById('submitBtn').addEventListener('click', (evt) => {
-    startServer();
-})
+    document.getElementById('cancelBtn').addEventListener('click', (evt) => {
+        var window = remote.getCurrentWindow();
+        window.close();
+    })
 
-document.getElementById('refillBtn').addEventListener('click', (evt) => {
-    getAndUpdateJLabCfg();
-})
+    document.getElementById('submitBtn').addEventListener('click', (evt) => {
+        startServer();
+    })
+
+    document.getElementById('refillBtn').addEventListener('click', (evt) => {
+        getAndUpdateJLabCfg();
+    })
+
+    winDecorations.setupDecorations();
+}
+
+main();

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Create new server</title>
+        <link rel="stylesheet" href="../../vendor/bootstrap-material-design/bootstrap-material-design.css">
+        <link rel="stylesheet" href="../../css/dialogbox.css">
+    </head>
+
+    <body>
+        <div class="container"> 
+            <div class="row">
+                <div class="col-2 text-center display-2" id="msgIcon">
+                    <i class="fas fa-question text-primary"></i>
+                </div>
+                <div class="col-10">
+                    <div class="row">
+                        <div class="col-12" id="msgBox">
+                            Do you want to set common shortcuts?<br>
+                            Note: This would save the shortcuts permanently to the server.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row float-right" style="bottom: 0;">
+                <div class="col-12">
+                    <button class="btn btn-secondary" id="btnSecondary">No</button>
+                    <button class="btn btn-primary" id="btnPrimary">Yes</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <script src="../../js/dialogbox.js"></script>
+        <script src="../../vendor/jquery/jquery-3.5.1.slim.js"></script>
+        <script src="../../vendor/popper/popper.js"></script>
+        <script src="../../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
+        <script src="../../vendor/font-awesome/all.js"></script>
+        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+
+</html>

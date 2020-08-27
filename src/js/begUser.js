@@ -8,6 +8,8 @@ const dialog = remote.dialog;
 const app = remote.app;
 const WIN = remote.getCurrentWindow();
 
+const winDecorations = require('../../js/modules/winDecorations');
+
 function showMessage(msgType, msg="") {
     var elem = document.getElementById('begInfoBox');
     if (msgType === 'error') {
@@ -66,19 +68,25 @@ function checkInput() {
     }
 }
 
-document.getElementById('backBtn').addEventListener('click', (evt) => {
-    WIN.webContents.goBack();
-})
+function main() {
+    document.getElementById('backBtn').addEventListener('click', (evt) => {
+        WIN.webContents.goBack();
+    })
 
-document.getElementById('cancelBtn').addEventListener('click', (evt) => {
-    WIN.close();
-})
+    document.getElementById('cancelBtn').addEventListener('click', (evt) => {
+        WIN.close();
+    })
 
-document.getElementById('submitBtn').addEventListener('click', (evt) => {
-    checkInput();
-    startServer();
-})
+    document.getElementById('submitBtn').addEventListener('click', (evt) => {
+        checkInput();
+        startServer();
+    })
 
-document.getElementById('chooseDir').addEventListener('click', (evt) => {
-    chooseDir();
-})
+    document.getElementById('chooseDir').addEventListener('click', (evt) => {
+        chooseDir();
+    })
+    
+    winDecorations.setupDecorations();
+}
+
+main();
