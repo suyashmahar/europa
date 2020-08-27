@@ -25,6 +25,7 @@
     "electron-localshortcut": "^3.2.1",
     "electron-reload": "^1.2.5",
     "electron-store": "^2.0.0",
+    "request": "^2.88.2",
     "spectre.css": "^0.5.3"
   },
   "build": {

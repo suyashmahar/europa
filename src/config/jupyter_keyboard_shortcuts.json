@@ -1,0 +1,11 @@
+{
+    "shortcuts": [
+        {
+            "command": "application:activate-next-tab",
+            "keys": [
+                "Ctrl Tab"
+            ],
+            "selector": "body"
+        }
+    ]
+}

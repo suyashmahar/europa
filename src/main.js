@@ -1,13 +1,16 @@
 'use strict'
 
 const path = require('path')
+const request = require('request')
 const { app, electron, ipcMain, BrowserWindow, session, dialog } = require('electron')
+const fs = require('fs');
 const os = require('os');
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 const electronLocalshortcut = require('electron-localshortcut');
 const commandExists = require('command-exists');
+const https = require('https')
 const { execSync } = require('child_process')
 const { spawn } = require('child_process');
 const { url } = require('inspector');
@@ -43,6 +46,8 @@ var loginTracker = {}
 var windowTracker = {}
 // Tracks the dialog box responses
 var dialogRespTracker = {}
+// Tracks jupyter format cookie for urls
+var jupyterCookieTracker = {}
 
 function getPythonInterpreter() {
   var result = undefined;
@@ -118,7 +123,7 @@ function setupIcons() {
   }
 }
 
-function askUserForShortcuts(window) {
+function askUserForShortcuts(url, window) {
   var props = {
     'type': 'question',
     'title': 'Set shorcuts?',
@@ -127,10 +132,53 @@ function askUserForShortcuts(window) {
     'content': `<p>Set JupyterLab shortcuts for Europa?</p><p class="text-secondary">E.g., Alt+Tab to switch tabs. Note that these changes will be persistent. <a onClick="shell.openExternal('${EUROPA_HELP_SHORTCUTS_LINK}'); return false;" href="javascript:void">Know More</a></p>`
   }
 
-  createDialog(window, props, 'askUserForShortcuts');
+  var id = url+'_ask_shortcuts';
+  createDialog(window, props, id, (resp) => { 
+    console.log(`Got: ${resp}`);
+    sendShortcuts(id);
+  });
 }
 
-function createDialog(window, props, id) {
+/**
+ * Sends a PUT request for the custom shortcut to link in the id
+ * @param {string} id url + tag
+ */
+function sendShortcuts(id) {
+  var url = id.replace(/_ask_shortcuts/, '');
+  var urlObj = new URL(url);
+
+  const jsonData = fs.readFileSync(path.join('config', 'jupyter_keyboard_shortcuts.json'));
+  console.log(`jsonData: ${(jsonData)}`)
+  request.put(   
+  {
+    url : `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`,
+    headers: {
+      'Host': urlObj.host,
+      'Origin': urlObj.origin,
+      'Connection': 'keep-alive',
+      'Content-Type': 'text/plain',
+      'Content-Length': jsonData.length,
+      'cookie': jupyterCookieTracker[urlObj.origin]['cookie'],
+      'X-XSRFToken': jupyterCookieTracker[urlObj.origin]['xsrf'],
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36' 
+    },
+    body: jsonData
+  },
+  function (error, response, body) {
+    if (!error) {
+      console.log(JSON.stringify(windowTracker));
+      windowTracker[urlObj.origin].reload();
+    }
+  }); 
+}
+
+/**
+ * Creates a dialog box
+ * @param {BrowserWindow} window 
+ * @param {dictionary} props Properties of the dialog box, check dialogbox.js
+ * @param {string} id unique identifier for this dialog box
+ */
+function createDialog(window, props, id, callback) {
   var dialogBox = new Window({
     file: path.join('renderer', 'dialog_box', 'dialogbox.html'),
     width: 500,
@@ -146,7 +194,7 @@ function createDialog(window, props, id) {
     dialogBox.webContents.send('construct', props, id);
   });
   
-  dialogRespTracker[id] = (resp) => { console.log(`Got: ${resp}`);};
+  dialogRespTracker[id] = callback;
 }
 
 function startHTTPProxy() {
@@ -155,9 +203,6 @@ function startHTTPProxy() {
       (details, callback) => {
       if (details.uploadData) {
         const buffer = Array.from(details.uploadData)[0].bytes;
-        // console.log('Request Header: ', String(details.url));
-        // console.log('Actual Header: ', String(details.requestHeaders));
-        // console.log('Request body: ', buffer.toString());
       }
       callback(details);
   });
@@ -171,7 +216,7 @@ function startHTTPProxy() {
           loginTracker[urlObj.origin] = true;
           console.log(getCookies(details.url));
           
-          askUserForShortcuts(windowTracker[urlObj.origin]);
+          askUserForShortcuts(details.url, windowTracker[urlObj.origin]);
         }
       }
       callback(details);
@@ -185,7 +230,25 @@ function getCookies(urlRequested) {
   const result = 
     session.defaultSession.cookies.get(
       {domain}, 
-      (error, result) => console.log('Found the following cookies', result)
+      (error, result) => {
+        var key = urlObj.origin;
+        
+        /* Generate cookie in JupyterLab's format */
+        jupyterCookieTracker[key] = {'cookie': undefined, 'xsrf': undefined};
+        jupyterCookieTracker[key]['cookie'] = result[0]['name'];
+        jupyterCookieTracker[key]['cookie'] += '=';
+        jupyterCookieTracker[key]['cookie'] += result[0]['value'];
+        jupyterCookieTracker[key]['cookie'] += '; ';
+        jupyterCookieTracker[key]['cookie'] += result[1]['name'];
+        jupyterCookieTracker[key]['cookie'] += '=';
+        jupyterCookieTracker[key]['cookie'] += result[1]['value'];
+
+        console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
+
+        jupyterCookieTracker[key]['xsrf'] = result[0]['value'];
+
+        console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
+      }
     )
 
   return result;
@@ -215,8 +278,8 @@ function main () {
   })
   
   // Hide menu bars
-  mainWindow.setMenu(null)
-  mainWindow.setAutoHideMenuBar(true)
+  // mainWindow.setMenu(null)
+  // mainWindow.setAutoHideMenuBar(true)
 
   // add todo window
   let addTodoWin
@@ -323,7 +386,7 @@ function main () {
       title: windowTitle
     })
     
-    windowTracker[url.origin] = newJupyterWin;
+    windowTracker[urlObj.origin] = newJupyterWin;
     newJupyterWin.loadURL(url);
     
     // Disable menu bar

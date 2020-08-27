@@ -43,7 +43,7 @@ function main() {
 
     // create an html string
     var recentUrlHtml = recentItemsList.reduce((html, item) => {
-      var itemDeleteBtnHtml = `<a id="${item}" href="javascript:void" class="inline-btn-link-delete">✕</a>`
+      var itemDeleteBtnHtml = `<a id="${item}" href="javascript:void" class="inline-btn-link-delete font-weight-bold">✕</a>`
       html += `<li class="recent-item"><a class="recent-item-link" href="javascript:void" id="${item}">${item}</a>${itemDeleteBtnHtml}</li>`
 
       return html;
