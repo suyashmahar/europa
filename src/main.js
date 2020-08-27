@@ -123,19 +123,50 @@ function setupIcons() {
   }
 }
 
+/**
+ * @brief Check if the shortcuts needs to be set (before asking user)
+ * Generate a GET request on the keyboard settings URL and compare the response
+ */
+function shouldSetShortcuts(urlObj, callback) {
+  request.get(
+    {
+      url : `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`,
+      headers: {
+        'Host': urlObj.host,
+        'Origin': urlObj.origin,
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/json',
+        'cookie': jupyterCookieTracker[urlObj.origin]['cookie'],
+        'X-XSRFToken': jupyterCookieTracker[urlObj.origin]['xsrf'],
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36' 
+      }
+    },
+    function (error, response, body) {
+      var result = false;
+      if (!error) {
+        var rcvData = JSON.parse(body);
+        if (rcvData['raw'].length == 2) {
+          result = true;
+        }
+      }
+      callback(result);
+    }); 
+}
+
 function askUserForShortcuts(url, window) {
   var props = {
     'type': 'question',
     'title': 'Set shorcuts?',
     'primaryBtn': 'Yes',
     'secondaryBtn': 'No',
-    'content': `<p>Set JupyterLab shortcuts for Europa?</p><p class="text-secondary">E.g., Alt+Tab to switch tabs. Note that these changes will be persistent. <a onClick="shell.openExternal('${EUROPA_HELP_SHORTCUTS_LINK}'); return false;" href="javascript:void">Know More</a></p>`
+    'content': `<p>Set JupyterLab shortcuts for Europa?</p><p class="text-secondary">E.g., Alt+Tab to switch tabs. Note that these changes are persistent. <a onClick="shell.openExternal('${EUROPA_HELP_SHORTCUTS_LINK}'); return false;" href="javascript:void">Know More</a></p>`
   }
 
   var id = url+'_ask_shortcuts';
   createDialog(window, props, id, (resp) => { 
-    console.log(`Got: ${resp}`);
-    sendShortcuts(id);
+    if (resp == 'primary') {
+      sendShortcuts(id);
+    }
   });
 }
 
@@ -148,7 +179,6 @@ function sendShortcuts(id) {
   var urlObj = new URL(url);
 
   const jsonData = fs.readFileSync(path.join('config', 'jupyter_keyboard_shortcuts.json'));
-  console.log(`jsonData: ${(jsonData)}`)
   request.put(   
   {
     url : `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`,
@@ -166,7 +196,6 @@ function sendShortcuts(id) {
   },
   function (error, response, body) {
     if (!error) {
-      console.log(JSON.stringify(windowTracker));
       windowTracker[urlObj.origin].reload();
     }
   }); 
@@ -190,6 +219,10 @@ function createDialog(window, props, id, callback) {
     parent: window
   })
 
+  dialogBox.setMenu(null)
+  dialogBox.setAutoHideMenuBar(true)
+
+
   dialogBox.webContents.on('did-finish-load', () => {
     dialogBox.webContents.send('construct', props, id);
   });
@@ -212,18 +245,22 @@ function startHTTPProxy() {
       if (details) {
         var urlObj = new URL(details.url);
         if (!(urlObj.origin in loginTracker)) {
-          console.log(`New login at ${urlObj.origin}.`);
           loginTracker[urlObj.origin] = true;
-          console.log(getCookies(details.url));
-          
-          askUserForShortcuts(details.url, windowTracker[urlObj.origin]);
+
+          getCookies(details.url, () => {
+            shouldSetShortcuts(urlObj, (result) => {
+              if (result) {
+                askUserForShortcuts(details.url, windowTracker[urlObj.origin]);
+              }
+            });
+          })
         }
       }
       callback(details);
   });
 }
 
-function getCookies(urlRequested) {
+function getCookies(urlRequested, callback) {
   const urlObj = new URL(urlRequested);
   var domain = urlObj.hostname;
 
@@ -243,11 +280,13 @@ function getCookies(urlRequested) {
         jupyterCookieTracker[key]['cookie'] += '=';
         jupyterCookieTracker[key]['cookie'] += result[1]['value'];
 
-        console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
+        // console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
 
         jupyterCookieTracker[key]['xsrf'] = result[0]['value'];
 
-        console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
+        // console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
+
+        callback();
       }
     )
 
@@ -293,7 +332,6 @@ function main () {
   })
 
   ipcMain.on('get-sys-cfg-jupyter-lab', (event) => {
-    console.log('get-sys-cfg-jupyter-lab() called')
     var resp = (
       getPythonInterpreter()
     );
@@ -301,8 +339,6 @@ function main () {
   });
 
   ipcMain.on('start-server', (event, py, startAt, portNum) => {
-    console.log('start-server() called');
-    console.log([py, startAt, portNum]);
     startServerOS(event, py, startAt, portNum)
   });
 
@@ -426,7 +462,6 @@ function main () {
   })
 
   ipcMain.on('dialog-result', (event, id, resp) => {
-    console.log(`${id}, ${resp}`)
     dialogRespTracker[id](resp);
   });
 }
