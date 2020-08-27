@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "command-exists": "^1.2.9",
-    "custom-electron-titlebar": "^3.2.4",
     "electron-localshortcut": "^3.2.1",
     "electron-reload": "^1.2.5",
     "electron-store": "^2.0.0",

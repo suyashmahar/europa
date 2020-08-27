@@ -1,21 +1,19 @@
-html, body {
+/* html, body {
     height: 100%;
-}
+} */
 
 .container {
     padding: 5%;
     padding-left: 25px;
     padding-right: 15px;
-    height: 100%;
+    margin: 0;
+    /* height: 100%; */
 }
 
 #msgBox {
     max-height: 80vh;
     overflow-y: auto;
-    margin-bottom: 7%;
-}
-
-#msgBox {
+    /* margin-bottom: 7%; */
     padding-right: 5%;
     padding-bottom: 3%;
 }

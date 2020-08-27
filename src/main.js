@@ -214,13 +214,13 @@ function createDialog(window, props, id, callback) {
     height: 230,
     icon: iconPath,
     frame: DRAW_FRAME,
-
+    useContentSize: true,
     // close with the main window
     parent: window
   })
 
-  dialogBox.setMenu(null)
-  dialogBox.setAutoHideMenuBar(true)
+  // dialogBox.setMenu(null)
+  // dialogBox.setAutoHideMenuBar(true)
 
 
   dialogBox.webContents.on('did-finish-load', () => {

@@ -4,7 +4,7 @@ const winDecorations = require('../../js/modules/winDecorations');
 
 var callbackName = undefined;
 var dialogId = undefined;
-var window = remote.getCurrentWindow();
+// var window = remote.getCurrentWindow();
 
 const ICON_HTML_MAP = {
     'info': `<i class="fas fa-info-circle text-primary"></i>`,
@@ -82,6 +82,19 @@ function main() {
     })
 
     winDecorations.setupDecorations();
+    var window = remote.getCurrentWindow();
+    window.webContents.once('did-finish-load', () => {
+        const contentSize = window.getContentSize();
+        const windowSize = window.getSize();
+        const mainContainer =document.getElementById('htmlTag')+2;
+        const newHeight = mainContainer.offsetHeight;
+        console.log(contentSize)
+        console.log(newHeight)
+        window.setSize(
+            windowSize[0], 
+            newHeight+(windowSize[1]-contentSize[1])
+        );
+    })
 }
 
 main();
