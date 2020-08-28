@@ -2,6 +2,8 @@
 
 const { ipcRenderer, shell } = require('electron')
 
+const {openNewGitHubIssue} = require('electron-util');
+
 const winDecorations = require('../js/modules/winDecorations');
  
 const recentItemClicked = (e) => {
@@ -23,16 +25,16 @@ function main() {
 
   // Listeners for help links
   document.getElementById('helpReportIssue').addEventListener('click', () => {
-    shell.openExternal('https://github.com/suyashmahar/jupytron/issues')
+    shell.openExternal('https://github.com/suyashmahar/europa/issues/new')
   })
   document.getElementById('helpGitHubRepo').addEventListener('click', () => {
-    shell.openExternal('https://github.com/suyashmahar/jupytron')
+    shell.openExternal('https://github.com/suyashmahar/europa')
   })
   document.getElementById('helpProductDocumentation').addEventListener('click', () => {
-    shell.openExternal('https://github.com/suyashmahar/jupytron/wiki')
+    shell.openExternal('https://github.com/suyashmahar/europa/wiki')
   })
   document.getElementById('helpTipsAndTricks').addEventListener('click', () => {
-    shell.openExternal('https://github.com/suyashmahar/jupytron/wiki/TipsAndTricks')
+    shell.openExternal('https://github.com/suyashmahar/europa/wiki/TipsAndTricks')
   })
   document.getElementById('helpKeyboardShortcuts').addEventListener('click', () => {
     shell.openExternal('https://github.com/suyashmahar/europa/wiki/Keyboard-shortcuts')
