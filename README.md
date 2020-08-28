@@ -7,5 +7,8 @@
 # What is Europa?
 Europa is a desktop client for JupyterLab that provides native app experience using windows and keyboard shortcuts.
 
-## Screenshot
-![Screenshot of Europa's welcome page](github-assets/img/welcomescreen.png)
+# Screenshots
+![Screenshot of Europa's welcome page](github-assets/img/screenshot0.png)
+![Screenshot of Europa's create new server page](github-assets/img/screenshot1.png)
+![Screenshot of Europa's advanced configuration page](github-assets/img/screenshot2.png)
+![Screenshot of Europa's advanced configuration page](github-assets/img/screenshot3.png)
