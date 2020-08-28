@@ -19,6 +19,7 @@ const { create } = require('domain');
 require('electron-reload')(process.cwd())
 
 const EUROPA_HELP_SHORTCUTS_LINK = 'https://github.com/suyashmahar/europa/wiki/keyboardshortcuts';
+const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/wiki/unsupportedjupyter';
 
 const MAX_RECENT_ITEMS = 4;
 const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:plugin?1598459201550`;
@@ -128,9 +129,11 @@ function setupIcons() {
  * Generate a GET request on the keyboard settings URL and compare the response
  */
 function shouldSetShortcuts(urlObj, callback) {
+  var reqUrl = `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`;
+  console.log(reqUrl)
   request.get(
     {
-      url : `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`,
+      url : reqUrl,
       headers: {
         'Host': urlObj.host,
         'Origin': urlObj.origin,
@@ -142,11 +145,26 @@ function shouldSetShortcuts(urlObj, callback) {
       }
     },
     function (error, response, body) {
+      // console.log(error)
+      // console.log(response)
       var result = false;
+      // console.log(body)
       if (!error) {
-        var rcvData = JSON.parse(body);
-        if (rcvData['raw'].length == 2) {
-          result = true;
+        if (rcvData) {
+          var rcvData = JSON.parse(body);
+          if (rcvData['raw'].length == 2) {
+            result = true;
+          }
+        } else {
+          // Show warning for an old version of jupyter lab
+          const props = {
+            'type': 'warning',
+            'title': 'Unsupported JupyterLab version',
+            'content': `<p>Unsupported version of JupyterLab.</p><p class="text-secondary">Some of the Europa's functionality will be disabled (e.g., automatic shortcut configuration). <a onClick="shell.openExternal('${EUROPA_UNSUPPORTED_JUPYTER_LINK}'); return false;" href="javascript:void">Know More.</a></p>`,
+            'primaryBtn': 'OK',
+            'secondaryBtn': '',
+          }
+          createDialog(windowTracker[urlObj.origin], props, `${Date.now()}`, (resp) => {});
         }
       }
       callback(result);

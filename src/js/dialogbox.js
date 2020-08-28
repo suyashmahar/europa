@@ -47,7 +47,11 @@ function setupUI(properties) {
     }
     
     document.getElementById('btnPrimary').innerHTML = primaryBtnStr;
-    document.getElementById('btnSecondary').innerHTML = secondaryBtnStr;
+    if (secondaryBtnStr) {
+        document.getElementById('btnSecondary').innerHTML = secondaryBtnStr;
+    } else {
+        document.getElementById('btnSecondary').style.visibility = 'hidden';
+    }
     document.getElementById('msgIcon').innerHTML = iconHTML;
     document.getElementById('msgBox').innerHTML = content;
     remote.getCurrentWindow().setTitle(titleStr);
