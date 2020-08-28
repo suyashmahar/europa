@@ -150,8 +150,8 @@ function shouldSetShortcuts(urlObj, callback) {
       var result = false;
       // console.log(body)
       if (!error) {
-        if (rcvData) {
-          var rcvData = JSON.parse(body);
+        var rcvData = JSON.parse(body);
+        if (rcvData['raw']) {
           if (rcvData['raw'].length == 2) {
             result = true;
           }
