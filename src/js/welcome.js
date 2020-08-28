@@ -35,7 +35,7 @@ function main() {
     shell.openExternal('https://github.com/suyashmahar/jupytron/wiki/TipsAndTricks')
   })
   document.getElementById('helpKeyboardShortcuts').addEventListener('click', () => {
-    shell.openExternal('https://github.com/suyashmahar/jupytron/wiki/KeyboardShortcuts')
+    shell.openExternal('https://github.com/suyashmahar/europa/wiki/Keyboard-shortcuts')
   })
 
   ipcRenderer.on('todos', (event, recentItemsList) => {

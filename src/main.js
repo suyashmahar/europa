@@ -18,7 +18,7 @@ const { create } = require('domain');
 
 require('electron-reload')(process.cwd())
 
-const EUROPA_HELP_SHORTCUTS_LINK = 'https://github.com/suyashmahar/europa/wiki/keyboardshortcuts';
+const EUROPA_HELP_SHORTCUTS_LINK = 'https://github.com/suyashmahar/europa/wiki/Keyboard-shortcuts';
 const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/wiki/unsupportedjupyter';
 
 const MAX_RECENT_ITEMS = 4;
@@ -148,7 +148,6 @@ function shouldSetShortcuts(urlObj, callback) {
       // console.log(error)
       // console.log(response)
       var result = false;
-      // console.log(body)
       if (!error) {
         var rcvData = JSON.parse(body);
         if (rcvData['raw']) {

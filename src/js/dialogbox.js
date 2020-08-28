@@ -64,7 +64,7 @@ function main() {
     })
 
     document.getElementById('btnSecondary').addEventListener('click', (evt) => {
-        ipcRenderer.send('dialog-result', dialogId, 'primary');
+        ipcRenderer.send('dialog-result', dialogId, 'secondary');
         window.close();
     })
 
@@ -90,8 +90,8 @@ function main() {
     window.webContents.once('did-finish-load', () => {
         const contentSize = window.getContentSize();
         const windowSize = window.getSize();
-        const mainContainer =document.getElementById('htmlTag')+2;
-        const newHeight = mainContainer.offsetHeight;
+        const mainContainer =document.getElementById('htmlTag');
+        const newHeight = mainContainer.offsetHeight+2;
         console.log(contentSize)
         console.log(newHeight)
         window.setSize(
