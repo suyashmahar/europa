@@ -17,8 +17,6 @@ const { url } = require('inspector');
 const { create } = require('domain');
 const { pathToFileURL } = require('url');
 
-require('electron-reload')(process.cwd())
-
 const EUROPA_HELP_SHORTCUTS_LINK = 'https://github.com/suyashmahar/europa/wiki/Keyboard-shortcuts';
 const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/wiki/unsupportedjupyter';
 
@@ -83,8 +81,7 @@ function monitorStartServerChild(event, child) {
 }
 
 function startServerWindows(event, py, startAt, portNum) {
-  var cwd = process.cwd();
-  var scriptPath = path.join(cwd, 'scripts', 
+  var scriptPath = path.join(appDir, 'scripts', 
     'windows', 'start_jupyter_lab.ps1');
     
     // Execute the command async
@@ -93,8 +90,7 @@ function startServerWindows(event, py, startAt, portNum) {
 }
 
 function startServerLinux(event, py, startAt, portNum) {
-  var cwd = process.cwd();
-  var scriptPath = path.join(cwd, 'scripts', 
+  var scriptPath = path.join(appDir, 'scripts', 
     'linux', 'start_jupyter_lab.sh');
     
     // Execute the command async
@@ -325,17 +321,12 @@ function removeTrackingForUrl(url) {
 }
 
 function show404(event, errorCode, errorDescription, validatedUrl, isMainFrame) {
-  if (validatedUrl == 'renderer/404_page/404page.html') {
-    return;
-  }
-  
   event.sender.webContents.removeListener('did-fail-load', show404);
-  console.log(event);
 
   event.sender.loadURL(pathToFileURL('renderer/404_page/404page.html').href);
-  
+
   electronLocalshortcut.register(event.sender, 'Ctrl+R', () => {
-    event.sender(validatedUrl);
+    event.sender.loadURL(validatedUrl);
   });
 }
 
@@ -448,6 +439,7 @@ function main () {
     var newJupyterWin = new BrowserWindow({
       width: 1080,
       height: 768,
+      preload: path.join(appDir, 'js', 'preload404.js'),
       webPreferences: {
         nodeIntegration: false
       },

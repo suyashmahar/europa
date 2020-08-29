@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+    <head>
     <meta charset="UTF-8">
     <title>Open a new server</title>
     <link rel="stylesheet" href="../../vendor/bootstrap-material-design/bootstrap-material-design.css">
     <link rel="stylesheet" href="../../vendor/font-awesome/all.css">
     <link rel="stylesheet" href="../../css/404.css">
-  </head>
+    </head>
 
-  <body>
+    <body>
     <div class="container vertical-center maximum-height">
         <div class="container">
             <div class="row">
@@ -18,7 +18,7 @@
                 </div>
                 <div class="col-8">
                     <div class="text-primary display-3 margin-bottom-md">Something went wrong</div>
-                    <div class="text-secondary">Europa couldn't load that page.</div>
+                    <div class="text-secondary" id="errorMsg">Europa couldn't load that page.</div>
                     <div class="separator"></div>
                     <div>
                         Please make sure that:
@@ -36,12 +36,12 @@
     </div>
 
 
-    <!-- <script src="../../js/addUrl.js"></script> -->
+    <script src="../../js/404page.js"></script>
     <script src="../../vendor/font-awesome/all.js"></script>
     <script src="../../vendor/jquery/jquery-3.5.1.slim.js"></script>
     <script src="../../vendor/popper/popper.js"></script>
     <script src="../../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
     <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
-  </body>
+    </body>
 
 </html>
