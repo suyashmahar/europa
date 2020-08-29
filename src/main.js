@@ -15,6 +15,7 @@ const { execSync } = require('child_process')
 const { spawn } = require('child_process');
 const { url } = require('inspector');
 const { create } = require('domain');
+const { pathToFileURL } = require('url');
 
 require('electron-reload')(process.cwd())
 
@@ -23,17 +24,18 @@ const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/w
 
 const MAX_RECENT_ITEMS = 4;
 const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:plugin?1598459201550`;
-const DRAW_FRAME = (os.platform !== 'linux');
+const DRAW_FRAME = true;
 
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' });
+const appDir = app.getAppPath();
 var iconPath;
 var mainWindow;
 
 // Tracks all the url opened so far
 var urlsOpened = []; 
 var JUPYTER_REQ_FILTER = {
-  urls: ['*']
+  urls: ['*://*/*']
 }
 
 // url filter to see if the login was successful 
@@ -322,6 +324,21 @@ function removeTrackingForUrl(url) {
   }
 }
 
+function show404(event, errorCode, errorDescription, validatedUrl, isMainFrame) {
+  if (validatedUrl == 'renderer/404_page/404page.html') {
+    return;
+  }
+  
+  event.sender.webContents.removeListener('did-fail-load', show404);
+  console.log(event);
+
+  event.sender.loadURL(pathToFileURL('renderer/404_page/404page.html').href);
+  
+  electronLocalshortcut.register(event.sender, 'Ctrl+R', () => {
+    event.sender(validatedUrl);
+  });
+}
+
 function main () {
   setupIcons();
   startHTTPProxy();
@@ -441,6 +458,9 @@ function main () {
     
     windowTracker[urlObj.origin] = newJupyterWin;
     newJupyterWin.loadURL(url);
+
+    /* Set did-fail-load listener once */
+    newJupyterWin.webContents.on("did-fail-load", show404);
     
     // Disable menu bar
     // newJupyterWin.setMenu(null)

@@ -15,8 +15,9 @@
   ],
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
+    "electron-builder": "^22.8.0",
     "devtron": "^1.4.0",
-    "electron": "^3.0.4",
+    "electron": "^5.0.4",
     "standard": "^12.0.1"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "electron-localshortcut": "^3.2.1",
     "electron-reload": "^1.2.5",
     "electron-store": "^2.0.0",
+    "electron-util": "^0.14.2",
     "request": "^2.88.2",
     "spectre.css": "^0.5.3"
   },
@@ -54,6 +56,20 @@
         "nsis"
       ]
     },
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      },
+      {
+        "from": "config",
+        "to": "config"
+      },
+      {
+        "from": "scripts",
+        "to": "scripts"
+      }
+    ],
     "icon": "assets/img/europa_logo.png"
   },
   "scripts": {
