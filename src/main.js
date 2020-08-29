@@ -367,15 +367,14 @@ function main () {
     startServerOS(event, py, startAt, portNum)
   });
 
-  // create add todo window
   ipcMain.on('open-url-window', () => {
-    // if addTodoWin does not already exist
     if (!addTodoWin) {
       // create a new add todo window
       addTodoWin = new Window({
         file: path.join('renderer', 'add_url', 'add_url.html'),
         width: 500,
         height: 120,
+        resizable: false,
         icon: iconPath,
         frame: DRAW_FRAME,
 
@@ -424,7 +423,6 @@ function main () {
     }
   })
 
-  // create add todo window
   ipcMain.on('open-url', (e, url) => {
     // Track for login on the opened url
     addTrackingForUrl(url);
