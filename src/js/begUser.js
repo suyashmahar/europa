@@ -23,8 +23,47 @@ function showMessage(msgType, msg="") {
     }
 }
 
+function setVisible(selector, visible) {
+    document.getElementById(selector).style.display = visible ? 'block' : 'none';
+}
+
 function startServer(dirPath) {
+    checkInput(() => {
+        showMessage('clear', '');
+        
+        var py          = "python";
+        var startDir    = dirPath;
+        var portNum     = 'auto';
+
+        ipcRenderer.send('start-server', py, startDir, portNum);
+        
+        // Hide the contents
+        setVisible('beg-config-container', 0);
+        setVisible('loadingSpinner', 1);
+    });
+}
+
+function startServerResp(event, result) {
+    console.log(`start-server result: ${result}`);
+    setVisible('beg-config-container', 1);
+    setVisible('loadingSpinner', 0);
     
+    if (String(result).startsWith('Failed')) {
+        showMessage('error', `${result}`);
+    } else {
+        showMessage('info', `Got: ${result}`);
+        var url = String(result)
+        
+        // trim white spaces
+        url = url.replace(/(^[ '\^\$\*#&]+)|([ '\^\$\*#&]+$)/g, '')
+        
+        if (url) {
+            ipcRenderer.send('add-recent-url', url);
+            ipcRenderer.send('open-url', url);
+            var window = remote.getCurrentWindow();
+            window.close();
+        }
+    }
 }
 
 function chooseDir() {
@@ -46,7 +85,7 @@ function chooseDirResp(dirPath) {
     }
 }
 
-function checkInput() {
+function checkInput(callback) {
     var dirPath = document.getElementById('startDir').value;
 
     if (dirPath) {
@@ -60,6 +99,7 @@ function checkInput() {
                 showMessage('error', `Path is not a directory.`);
             } else {
                 console.log(`${dirPath} exists as a directory.`);
+                callback();
                 showMessage('clear');
             }
         });
@@ -78,8 +118,7 @@ function main() {
     })
 
     document.getElementById('submitBtn').addEventListener('click', (evt) => {
-        checkInput();
-        startServer();
+        startServer(document.getElementById('startDir').value);
     })
 
     document.getElementById('chooseDir').addEventListener('click', (evt) => {
@@ -87,6 +126,8 @@ function main() {
     })
     
     winDecorations.setupDecorations();
+
+    ipcRenderer.on('start-server-resp', startServerResp);
 }
 
 main();

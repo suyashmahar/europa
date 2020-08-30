@@ -55,10 +55,31 @@ watchServer() {
     done
 }
 
+doChecks() {
+    local tempFile=$1
+
+    # Check for python
+    if ! type "${py}" >/dev/null; then
+        pingFailure "Python not found" "${tempFile}"
+    fi
+
+    # Check for JupyterLab
+    if ! "${py}" -m jupyterlab --help >/dev/null 2>&1; then
+        pingFailure "JupyterLab is not installed" "${tempFile}"
+    fi
+
+    # Check start directory
+    if [ ! -d "${startAt}" ]; then
+        pingFailure "Startup directory does not exist" "${tempFile}"
+    fi
+}
+
 main() {
     parseArgs "$@"
 
     local tempFile="$(mktemp)"
+
+    doChecks "${tempFile}"
 
     local portStr=""
     if [ "$portNum" != 'auto' ]; then
