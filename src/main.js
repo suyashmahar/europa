@@ -2,7 +2,7 @@
 
 const path = require('path')
 const request = require('request')
-const { app, ipcMain, BrowserWindow, session } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, session } = require('electron')
 const fs = require('fs');
 const os = require('os');
 
@@ -14,16 +14,15 @@ const commandExists = require('command-exists');
 const { execSync } = require('child_process')
 const { spawn } = require('child_process');
 const { pathToFileURL } = require('url');
-const { create } = require('domain');
-const { settings } = require('cluster');
 
 const EUROPA_HELP_SHORTCUTS_LINK = 'https://github.com/suyashmahar/europa/wiki/Keyboard-shortcuts';
 const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/wiki/Supported-JupyterLab-Versions';
 
 const MAX_RECENT_ITEMS = 4;
-const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:plugin?1598459201550`;
+const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts`;
+const USER_AGENT_STR = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36';
 const DRAW_FRAME = true;
-const VERSION_STRING = "1.0.0"
+const VERSION_STRING = "1.0.0";
 
 /* Create all the data stores */
 const recentUrlsDb  = new RecentUrlsDB({ name: 'recent_urls' });
@@ -31,10 +30,9 @@ const settingsDb    = new SettingsDB({ name: 'global_settings' });
 
 var appDir = __dirname;
 var iconPath;
-var mainWindow, settingsWin;
+var mainWindow, settingsWin, openUrlWin, newServerDialog;
 
 // Tracks all the url opened so far
-var urlsOpened = []; 
 var JUPYTER_REQ_FILTER = {
   urls: ['*://*/*']
 }
@@ -66,8 +64,7 @@ function getPythonInterpreter() {
   if (found) {
     result = execSync(`python -c "import sys; print(sys.executable)"`)
   }
-
-  console.log('Returning: '.concat(result));
+  
   return result;
 }
 
@@ -77,18 +74,18 @@ function monitorStartServerChild(event, child) {
     if (data) {
       event.sender.send('start-server-resp', data);
     }
-    console.log("Shell Data: " + data);
   });
   child.stderr.on("data", function(data){
     if (data) {
       event.sender.send('start-server-resp', data);
     }
-    console.log("Shell Errors: " + data);
+    console.error("Shell Errors: " + data);
   });
-
-  console.log(`Child.killed = ${child.killed}`)
 }
 
+/**
+ * Starts a new JupyterLab server on Windows OS. See @ref startServer
+ */
 function startServerWindows(event, py, startAt, portNum) {
   var scriptPath = path.join(appDir, 'scripts', 
     'windows', 'start_jupyter_lab.ps1');
@@ -98,17 +95,25 @@ function startServerWindows(event, py, startAt, portNum) {
     monitorStartServerChild(event, child);
 }
 
+/**
+ * Starts a new JupyterLab server in posix environment. See @ref startServer
+ */
 function startServerLinux(event, py, startAt, portNum) {
   var scriptPath = path.join(appDir, 'scripts', 
-    'linux', 'start_jupyter_lab.sh');
+    'posix', 'start_jupyter_lab.sh');
     
     // Execute the command async
     var child = spawn("sh", [scriptPath, py, startAt, portNum]);
-    console.log(`Running: sh ${scriptPath} ${py} ${startAt} ${portNum}`)
     monitorStartServerChild(event, child);
 }
 
-// Runs OS specific script to start a jupyter lab server
+/**
+ * Start JupyterLab server using a OS dependent script
+ * @param {*} event 
+ * @param {String} py Path to python interpreter
+ * @param {String} startAt Directory to start JupyterLab at
+ * @param {String} portNum {0-64k|'auto'}
+ */
 function startServerOS(event, py, startAt, portNum) {
   if (process.platform === "win32") {
     startServerWindows(event, py, startAt, portNum);
@@ -119,6 +124,9 @@ function startServerOS(event, py, startAt, portNum) {
   }
 }
 
+/**
+ * Set platform specific icon file.
+ */
 function setupIcons() {
   if (os.platform() === 'win32') {
     iconPath = path.join(__dirname, 'assets', 'img', 'europa_logo.ico');
@@ -131,8 +139,10 @@ function setupIcons() {
   }
 }
 
+/** 
+ * Show warning for an unsupported version of jupyter lab 
+ */
 function showUnsupportedJupyterMsg(urlObj) {
-  /* Show warning for an unsupported version of jupyter lab */
   const props = {
     'type': 'warning',
     'title': 'Unsupported JupyterLab version',
@@ -144,19 +154,19 @@ function showUnsupportedJupyterMsg(urlObj) {
 }
 
 /**
- * @brief Check if the shortcuts needs to be set (before asking user)
+ * Check if the shortcuts needs to be set (before asking user)
  * Generate a GET request on the keyboard settings URL and compare the response
  */
 function shouldSetShortcuts(urlObj, callback) {
-  const shortcutDialogEnabled = getSettings()['show-keyboard-shortcuts-dialog'] == 'ask';
-  console.log(`shortcutDialogEnabled = ${shortcutDialogEnabled}`);
+  const userKbdDialogPref = getSettings()['show-keyboard-shortcuts-dialog'];
+  const shortcutDialogEnabled = (userKbdDialogPref == 'ask');
 
   if (shortcutDialogEnabled == false) {
     return;
   }
 
-  var reqUrl = `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`;
-  console.log(reqUrl)
+  var reqUrl = `${urlObj.origin}${SHORTCUT_SEND_URL}?${Date.now()}`;
+
   request.get(
     {
       url : reqUrl,
@@ -167,7 +177,7 @@ function shouldSetShortcuts(urlObj, callback) {
         'Content-Type': 'application/json',
         'cookie': jupyterCookieTracker[urlObj.origin]['cookie'],
         'X-XSRFToken': jupyterCookieTracker[urlObj.origin]['xsrf'],
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36' 
+        'User-Agent': USER_AGENT_STR 
       }
     },
     function (error, response, body) {
@@ -225,10 +235,12 @@ function sendShortcuts(id) {
   const shortcutsFile = path.join(
     appDir, 'config', 'jupyter_keyboard_shortcuts.json'
   );
+
   const jsonData = fs.readFileSync(shortcutsFile);
+  
   request.put(   
   {
-    url : `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`,
+    url : `${urlObj.origin}${SHORTCUT_SEND_URL}?${Date.now()}`,
     headers: {
       'Host': urlObj.host,
       'Origin': urlObj.origin,
@@ -237,7 +249,7 @@ function sendShortcuts(id) {
       'Content-Length': jsonData.length,
       'cookie': jupyterCookieTracker[urlObj.origin]['cookie'],
       'X-XSRFToken': jupyterCookieTracker[urlObj.origin]['xsrf'],
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36' 
+      'User-Agent': USER_AGENT_STR
     },
     body: jsonData
   },
@@ -262,6 +274,7 @@ function createDialog(window, props, id, callback) {
     icon: iconPath,
     frame: DRAW_FRAME,
     useContentSize: true,
+    
     // close with the main window
     parent: window
   })
@@ -275,10 +288,13 @@ function createDialog(window, props, id, callback) {
   });
   
   dialogRespTracker[id] = callback;
-
-
 }
 
+/**
+ * Starts a request interceptor to check if the user has logged into the server.
+ * This is done to only show the keyboard shortcut dialog once the user has been
+ * authenticated.
+ */
 function startHTTPProxy() {
   const webRequest = session.defaultSession.webRequest
   webRequest.onBeforeSendHeaders(JUPYTER_REQ_FILTER, 
@@ -309,6 +325,11 @@ function startHTTPProxy() {
   });
 }
 
+/**
+ * Sets all the cookies in jupyterCookieTracker using JupyterLab's format
+ * @param {String} urlRequested URL to get cookies for
+ * @param {function} callback Callback function
+ */
 function getCookies(urlRequested, callback) {
   const urlObj = new URL(urlRequested);
   var domain = urlObj.hostname;
@@ -319,7 +340,7 @@ function getCookies(urlRequested, callback) {
       (error, result) => {
         var key = urlObj.origin;
         
-        console.log(`Total ${result.length} cookies found`)
+        // console.log(`Total ${result.length} cookies found`)
 
         /* Generate cookie in JupyterLab's format */
         jupyterCookieTracker[key] = {'cookie': undefined, 'xsrf': undefined};
@@ -331,11 +352,11 @@ function getCookies(urlRequested, callback) {
         jupyterCookieTracker[key]['cookie'] += '=';
         jupyterCookieTracker[key]['cookie'] += result[1]['value'];
 
-        console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
+        // console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
 
         jupyterCookieTracker[key]['xsrf'] = result[0]['value'];
 
-        console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
+        // console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
 
         callback();
       }
@@ -345,21 +366,33 @@ function getCookies(urlRequested, callback) {
 }
 
 function addTrackingForUrl(url) {
-  console.log('Starting tracking for ' + url);
+  return;
 }
 
+/**
+ * Rmoves a URL from the list of tracked URL and the existing information is 
+ * lost
+ * @param {String} url URL to remove tracking for
+ */
 function removeTrackingForUrl(url) {
-  console.log('Removing tracking for ' + url);
   const urlObj = new URL(url);
   if (urlObj.origin in loginTracker) {
     delete loginTracker[urlObj.origin];
   }
 }
 
+/**
+ * Shows a 404 page on event.sender BrowserWindow
+ * @param {*} event 
+ * @param {*} errorCode 
+ * @param {*} errorDescription 
+ * @param {String} validatedUrl URL that resulted in the error
+ * @param {*} isMainFrame 
+ */
 function show404(event, errorCode, errorDescription, validatedUrl, isMainFrame) {
   event.sender.webContents.removeListener('did-fail-load', show404);
-
-  event.sender.loadURL(pathToFileURL('renderer/404_page/404page.html').href);
+  var errorPagePath = path.join(__dirname, 'renderer', '404_page', '404page.html');
+  event.sender.loadURL(pathToFileURL(errorPagePath).href);
 
   electronLocalshortcut.register(event.sender, 'Ctrl+R', () => {
     event.sender.loadURL(validatedUrl);
@@ -368,7 +401,6 @@ function show404(event, errorCode, errorDescription, validatedUrl, isMainFrame) 
 
 function showOptionsWindow() {
   if (!settingsWin) {
-    // create a new add todo window
     settingsWin = new Window({
       file: path.join('renderer', 'settings_page', 'settings.html'),
       width: 700,
@@ -396,18 +428,30 @@ function showOptionsWindow() {
   }
 }
 
+/**
+ * Clear cache, useful when same site has multiple cookies stored
+ */
 function clearCache() {
   session.defaultSession.clearStorageData();
 }
 
+/**
+ * Saves settings to disk
+ * @param {dictionary} settingsObj Settings to save
+ */
 function setSettings(settingsObj) {
   settingsDb.saveSettings(settingsObj);
 }
-
-function getSettings(settingsObj) {
+/**
+ * Gets the settings from disk and returns a dictionary object
+ */
+function getSettings() {
   return settingsDb.getSettings();
 }
 
+/**
+ * The about dialog box for copyright and license information
+ */
 function showAboutDialog(win) {
   const aboutDialogContents = `
     <h4>About Europa v${VERSION_STRING}</h4>
@@ -433,119 +477,72 @@ function showAboutDialog(win) {
   createDialog(mainWindow, props, String(Date.now()), () => void 0);
 }
 
-function main() {
-  fixASARPath();
+function showOpenURLDialog() {
+  if (!openUrlWin) {
+    // create a new add todo window
+    openUrlWin = new Window({
+      file: path.join('renderer', 'add_url', 'add_url.html'),
+      width: 500,
+      height: 120,
+      resizable: false,
+      icon: iconPath,
+      frame: DRAW_FRAME,
 
-  console.log(settingsDb.getSettings());
+      // close with the main window
+      parent: mainWindow
+    })
+   
+    // cleanup
+    openUrlWin.on('closed', () => {
+      openUrlWin = null
+    })
+    
+    // Register shortcuts
+    electronLocalshortcut.register(openUrlWin, 'Esc', () => {
+      openUrlWin.close();
+    });
+  }
+}
 
-  setupIcons();
-  startHTTPProxy();
-  
-  // Menu.setApplicationMenu(null);
+/**
+ * Shows the window for creating a new JuptyerLab server
+ */
+function showNewServerDialog() {
+  if (!newServerDialog) {
+    newServerDialog = new Window({
+      file: path.join('renderer', 'new_server', 'newserver.html'),
+      width: 600,
+      height: 450,
+      maxWidth: 600,
+      maxHeight: 450,
+      minWidth: 600,
+      minHeight: 450,
+      resizable: false,
 
-  mainWindow = new Window({
-    file: path.join('renderer', 'welcome.html'),
-    titleBarStyle: "hidden",
-    icon: iconPath,
-    frame: DRAW_FRAME,
-  })
-  
-  let addTodoWin
-  let newServerDialog
+      // close with the main window
+      parent: mainWindow,
 
-  mainWindow.once('show', () => {
-    mainWindow.webContents.send('recent-urls', recentUrlsDb.urls)
-  })
+      icon: iconPath,
+      frame: DRAW_FRAME,
+    })
 
-  ipcMain.on('get-sys-cfg-jupyter-lab', (event) => {
-    var resp = (
-      getPythonInterpreter()
-    );
-    event.sender.send('asynchronous-reply', resp);
-  });
+    // Register shortcuts
+    electronLocalshortcut.register(newServerDialog, 'Esc', () => {
+      newServerDialog.close();
+    });
 
-  ipcMain.on('start-server', (event, py, startAt, portNum) => {
-    startServerOS(event, py, startAt, portNum)
-  });
+    // cleanup
+    newServerDialog.on('closed', () => {
+      newServerDialog = null;
+    })
+  }
+}
 
-  ipcMain.on('save-settings', (event, settingsObj) => {
-    setSettings(settingsObj);
-  });
-
-  ipcMain.on('show-about-europa', (event, settingsObj) => {
-    showAboutDialog(event.sender);
-  });
-
-  ipcMain.on('clear-cache', (event, settingsObj) => {
-    console.log('Clearing cache');
-    clearCache();
-  });
-
-  ipcMain.on('open-url-window', () => {
-    if (!addTodoWin) {
-      // create a new add todo window
-      addTodoWin = new Window({
-        file: path.join('renderer', 'add_url', 'add_url.html'),
-        width: 500,
-        height: 120,
-        resizable: false,
-        icon: iconPath,
-        frame: DRAW_FRAME,
-
-        // close with the main window
-        parent: mainWindow
-      })
-     
-      // Disable menu bar
-      addTodoWin.removeMenu();
-      
-      // cleanup
-      addTodoWin.on('closed', () => {
-        addTodoWin = null
-      })
-      
-      // Register shortcuts
-      electronLocalshortcut.register(addTodoWin, 'Esc', () => {
-        addTodoWin.close();
-      });
-    }
-  })
-
-  ipcMain.on('options-window', showOptionsWindow);
-
-  // create add todo window
-  ipcMain.on('new-server-window', () => {
-    if (!newServerDialog) {
-      newServerDialog = new Window({
-        file: path.join('renderer', 'new_server', 'newserver.html'),
-        width: 600,
-        height: 450,
-        maxWidth: 600,
-        maxHeight: 450,
-        minWidth: 600,
-        minHeight: 450,
-        // close with the main window
-        parent: mainWindow,
-        icon: iconPath,
-        frame: DRAW_FRAME,
-      })
-
-      // Disable menu bar
-      newServerDialog.removeMenu();
-
-      // Register shortcuts
-      electronLocalshortcut.register(newServerDialog, 'Esc', () => {
-        newServerDialog.close();
-      });
-
-      // cleanup
-      newServerDialog.on('closed', () => {
-        newServerDialog = null;
-      })
-    }
-  })
-
-  ipcMain.on('open-url', (e, url) => {
+/**
+ * Browse a URL using Europa's browser window
+ * @param {String} url URL to browse to
+ */
+function showEuropaBrowser(e, url) {
     // Track for login on the opened url
     addTrackingForUrl(url);
     var urlObj = new URL(url)
@@ -574,19 +571,17 @@ function main() {
     /* Set did-fail-load listener once */
     newJupyterWin.webContents.on("did-fail-load", show404);
     
-    // Disable menu bar
-    newJupyterWin.removeMenu();
-
-    // cleanup
+    /* cleanup */
     newJupyterWin.on('closed', () => {
       newJupyterWin = null
       removeTrackingForUrl(url);
     })
+
     newJupyterWin.once('ready-to-show', () => {
       newJupyterWin.show()
     })
 
-    // Prevent the title from being updated
+    /* Prevent the title from being updated */
     newJupyterWin.on('page-title-updated', (evt) => {
       evt.preventDefault();
     });
@@ -595,26 +590,61 @@ function main() {
     electronLocalshortcut.register(newJupyterWin, 'Ctrl+Shift+W', () => {
       newJupyterWin.close();
     });
-  })
+}
 
+function addMainWindowShortcuts() {
+  electronLocalshortcut.register(mainWindow, 'Ctrl+O', showOpenURLDialog);
+  electronLocalshortcut.register(mainWindow, 'Ctrl+N', showNewServerDialog);
+}
+
+/**
+ * Add listeners for getting and setting recent URL list
+ */
+function addRecentURLListeners() {
   ipcMain.on('add-recent-url', (event, url) => {
-    const updatedUrls = recentUrlsDb.pushFront(url, MAX_RECENT_ITEMS).urls
-
-    mainWindow.send('recent-urls', updatedUrls)
+    const updatedUrls = recentUrlsDb.pushFront(url, MAX_RECENT_ITEMS).urls;
+    mainWindow.send('recent-urls', updatedUrls);
   })
 
   ipcMain.on('delete-recent-url', (event, url) => {
-    const updatedUrls = recentUrlsDb.remove(url).urls
+    const updatedUrls = recentUrlsDb.remove(url).urls;
+    mainWindow.send('recent-urls', updatedUrls);
+  })
+}
 
-    mainWindow.send('recent-urls', updatedUrls)
+function main() {
+  fixASARPath();
+
+  setupIcons();
+  startHTTPProxy();
+  
+  Menu.setApplicationMenu(null);
+
+  mainWindow = new Window({
+    file: path.join('renderer', 'welcome.html'),
+    titleBarStyle: "hidden",
+    icon: iconPath,
+    frame: DRAW_FRAME,
   })
 
-  ipcMain.on('dialog-result', (event, id, resp) => {
-    dialogRespTracker[id](resp);
-  });
+  mainWindow.once('show', () => {
+    mainWindow.webContents.send('recent-urls', recentUrlsDb.urls)
+  })
 
-  console.log(`appDir: ${appDir}`)
-  console.log(`appDir: ${app.getAppPath()}`)
+  addMainWindowShortcuts();
+  addRecentURLListeners();
+
+  ipcMain.on('get-sys-cfg-jupyter-lab', (event) => 
+    event.sender.send('asynchronous-reply', getPythonInterpreter()));
+  ipcMain.on('start-server', startServerOS);
+  ipcMain.on('save-settings', (e, settingsObj) => setSettings(settingsObj));
+  ipcMain.on('clear-cache', clearCache);
+  ipcMain.on('options-window', showOptionsWindow);
+  ipcMain.on('open-new-url', showOpenURLDialog);
+  ipcMain.on('new-server-window', showNewServerDialog);
+  ipcMain.on('open-url', showEuropaBrowser);
+  ipcMain.on('show-about-europa', e => showAboutDialog(e.sender));
+  ipcMain.on('dialog-result', (event, id, resp) => dialogRespTracker[id](resp));
 }
 
 app.on('ready', main)

@@ -59,8 +59,8 @@ class RecentUrls extends Store {
    */
   remove(url) {
     // filter out the target url
-    this.urls = this.urls.filter((elem) => {
-      elem !== url
+    this.urls = this.urls.filter(function (elem) {
+      return elem != url;
     });
 
     return this.saveUrls();

@@ -1,11 +1,133 @@
 {
+    // Shortcuts set by Europa <https://github.com/suyashmahar/europa>
+    // You can remove, edit or add more shortcuts to this file, Europa will not
+    // ask again to set them.
     "shortcuts": [
+        // Disable existing next tab shortcut
         {
             "command": "application:activate-next-tab",
             "keys": [
-                "Ctrl Tab"
+                "Accel Shift ]"
+            ],
+            "selector": "body",
+            "disabled": true
+        },
+        // Set new
+        {
+            "command": "application:activate-next-tab",
+            "keys": [
+                "Accel Tab"
             ],
             "selector": "body"
-        }
+        },
+        // Disable existing previous tab shortcut
+        {
+            "command": "application:activate-previous-tab",
+            "keys": [
+                "Accel Shift ["
+            ],
+            "selector": "body",
+            "disabled": true
+        },
+        // Set new
+        {
+            "command": "application:activate-previous-tab",
+            "keys": [
+                "Accel Shift Tab"
+            ],
+            "selector": "body"
+        },
+        // Disable existing new launcher shortcut
+        {
+            "command": "filebrowser:create-main-launcher",
+            "keys": [
+                "Accel Shift L"
+            ],
+            "selector": "body",
+            "disabled": true
+        },
+        // Set new
+        {
+            "command": "filebrowser:create-main-launcher",
+            "keys": [
+                "Accel N"
+            ],
+            "selector": "body"
+        },
+        // Disable existing close tab shortcut
+        {
+            "command": "application:close",
+            "keys": [
+                "Alt W"
+            ],
+            "selector": ".jp-Activity",
+            "disabled": true
+        },
+        // Set new
+        {
+            "command": "application:close",
+            "keys": [
+                "Accel W"
+            ],
+            "selector": ".jp-Activity"
+        },
+        // Set shortcuts for menu bar
+        {
+            "command": "filemenu:open",
+            "keys": [
+                "Alt F"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "editmenu:open",
+            "keys": [
+                "Alt E"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "viewmenu:open",
+            "keys": [
+                "Alt V"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "runmenu:open",
+            "keys": [
+                "Alt R"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "kernelmenu:open",
+            "keys": [
+                "Alt K"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "tabsmenu:open",
+            "keys": [
+                "Alt T"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "settingsmenu:open",
+            "keys": [
+                "Alt S"
+            ],
+            "selector": "body"
+        },
+        {
+            "command": "helpmenu:open",
+            "keys": [
+                "Alt H"
+            ],
+            "selector": "body"
+        },
+        
     ]
 }

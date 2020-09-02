@@ -16,7 +16,7 @@ const deleteRecentItemClicked = (e) => {
 
 function main() {
   document.getElementById('openUrlBtn').addEventListener('click', () => {
-    ipcRenderer.send('open-url-window');
+    ipcRenderer.send('open-new-url');
   });
   document.getElementById('newServerBtn').addEventListener('click', () => {
     ipcRenderer.send('new-server-window');
