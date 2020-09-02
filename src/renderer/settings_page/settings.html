@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Create new server</title>
+        <link rel="stylesheet" href="../../vendor/bootstrap-material-design/bootstrap-material-design.css">
+        <link rel="stylesheet" href="../../css/settings.css">
+        <link rel="stylesheet" href="../../css/common.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="large-header">
+                <h2 id="headerTxt">Settings <span class="badge badge-primary" id="statusBadge"></span></h2>
+            </div>
+
+            <div class="row text-small"> 
+                <div class="col">
+                    <h4>Europa extras</h4>
+                    <div class="col-12">
+                        <h5>Keyboard shortcuts dialog</h5>
+                        <p class="text-secondary">Configure when europa should ask to set shortcuts on a server:</p>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="kbdShortcutsDlgAsk" value="ask" checked>
+                            <label class="form-check-label text-small" for="kbdShortcutsDlgAsk">
+                                Ask if the shortcuts were never set
+                            </label>
+                            </div>
+                            <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="kbdShortcutsDlgNeverAsk" value="never">
+                            <label class="form-check-label text-small" for="kbdShortcutsDlgNeverAsk">
+                                Never ask
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row text-small">
+                <div class="col-12">
+                    <h4>Cookies and cache</h4>
+                    <p class="text-secondary">You can delete all the saved login information (cookies). 
+                    Use this option if you are experiencing issues with server login 
+                    or Europa shows unsupported JupyterLab version warning. </p>
+                    <p><span class="text-danger">Warning: This will log you out of all the servers on Europa.</span></p>
+                    <a href="javascript:void" id="clearCache">Clear cache</a>
+                </div>
+            </div>
+
+            <!-- <div class="row">
+                <div class="col-12">
+                    <h4>About Europa</h4>
+                    <p>Copyright &#169; 2020 Suyash Mahar</p>
+                    <p class="text-secondary text-small">This program is distributed under the terms of the <a onClick="shell.openExternal('https://www.gnu.org/licenses/gpl-3.0.en.html'); return false;" href="javascript:void">GPL v3</a>.</p>
+                    <a class="text-small" onClick="shell.openExternal('https://github.com/suyashmahar/europa'); return false;" href="javascript:void">Source code.</a>
+                </div>
+            </div> -->
+
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary btn-raised" id="saveBtn">Save</button>
+                    <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="../../js/settingsPage.js"></script>
+        <script src="../../vendor/jquery/jquery-3.5.1.slim.js"></script>
+        <script src="../../vendor/popper/popper.js"></script>
+        <script src="../../vendor/bootstrap-material-design/bootstrap-material-design.js"></script>
+        <script src="../../vendor/font-awesome/all.js"></script>
+        <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+  </body>
+
+</html>

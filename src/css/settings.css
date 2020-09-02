@@ -1,0 +1,15 @@
+body {
+    font-size: 0.8em;
+}
+
+.row {
+    padding-bottom: 5%;
+}
+
+.text-small {
+    font-size: 0.9em;
+}
+
+.text-normal {
+    font-size: 1em;
+}

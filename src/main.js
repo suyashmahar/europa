@@ -2,33 +2,36 @@
 
 const path = require('path')
 const request = require('request')
-const { app, electron, ipcMain, BrowserWindow, session, dialog } = require('electron')
+const { app, ipcMain, BrowserWindow, session } = require('electron')
 const fs = require('fs');
 const os = require('os');
 
 const Window = require('./Window')
-const DataStore = require('./DataStore')
+const RecentUrlsDB = require('./RecentUrlsDB')
+const SettingsDB = require('./SettingsDB')
 const electronLocalshortcut = require('electron-localshortcut');
 const commandExists = require('command-exists');
-const https = require('https')
 const { execSync } = require('child_process')
 const { spawn } = require('child_process');
-const { url } = require('inspector');
-const { create } = require('domain');
 const { pathToFileURL } = require('url');
+const { create } = require('domain');
+const { settings } = require('cluster');
 
 const EUROPA_HELP_SHORTCUTS_LINK = 'https://github.com/suyashmahar/europa/wiki/Keyboard-shortcuts';
-const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/wiki/unsupportedjupyter';
+const EUROPA_UNSUPPORTED_JUPYTER_LINK = 'https://github.com/suyashmahar/europa/wiki/Supported-JupyterLab-Versions';
 
 const MAX_RECENT_ITEMS = 4;
 const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:plugin?1598459201550`;
 const DRAW_FRAME = true;
+const VERSION_STRING = "1.0.0"
 
-// create a new todo store name "Todos Main"
-const todosData = new DataStore({ name: 'Todos Main' });
-const appDir = app.getAppPath();
+/* Create all the data stores */
+const recentUrlsDb  = new RecentUrlsDB({ name: 'recent_urls' });
+const settingsDb    = new SettingsDB({ name: 'global_settings' });
+
+var appDir = __dirname;
 var iconPath;
-var mainWindow;
+var mainWindow, settingsWin;
 
 // Tracks all the url opened so far
 var urlsOpened = []; 
@@ -49,6 +52,12 @@ var windowTracker = {}
 var dialogRespTracker = {}
 // Tracks jupyter format cookie for urls
 var jupyterCookieTracker = {}
+
+function fixASARPath() {
+  if (appDir.endsWith('.asar')) {
+    appDir = path.dirname(appDir);
+  }
+}
 
 function getPythonInterpreter() {
   var result = undefined;
@@ -122,11 +131,30 @@ function setupIcons() {
   }
 }
 
+function showUnsupportedJupyterMsg(urlObj) {
+  /* Show warning for an unsupported version of jupyter lab */
+  const props = {
+    'type': 'warning',
+    'title': 'Unsupported JupyterLab version',
+    'content': `<p>Unsupported version of JupyterLab.</p><p class="text-secondary">Some of the Europa's functionality will be disabled (e.g., automatic shortcut configuration). <a onClick="shell.openExternal('${EUROPA_UNSUPPORTED_JUPYTER_LINK}'); return false;" href="javascript:void">Know More</a>.</p>`,
+    'primaryBtn': 'OK',
+    'secondaryBtn': '',
+  }
+  createDialog(windowTracker[urlObj.origin], props, `${Date.now()}`, (resp) => {});
+}
+
 /**
  * @brief Check if the shortcuts needs to be set (before asking user)
  * Generate a GET request on the keyboard settings URL and compare the response
  */
 function shouldSetShortcuts(urlObj, callback) {
+  const shortcutDialogEnabled = getSettings()['show-keyboard-shortcuts-dialog'] == 'ask';
+  console.log(`shortcutDialogEnabled = ${shortcutDialogEnabled}`);
+
+  if (shortcutDialogEnabled == false) {
+    return;
+  }
+
   var reqUrl = `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`;
   console.log(reqUrl)
   request.get(
@@ -153,16 +181,10 @@ function shouldSetShortcuts(urlObj, callback) {
             result = true;
           }
         } else {
-          // Show warning for an old version of jupyter lab
-          const props = {
-            'type': 'warning',
-            'title': 'Unsupported JupyterLab version',
-            'content': `<p>Unsupported version of JupyterLab.</p><p class="text-secondary">Some of the Europa's functionality will be disabled (e.g., automatic shortcut configuration). <a onClick="shell.openExternal('${EUROPA_UNSUPPORTED_JUPYTER_LINK}'); return false;" href="javascript:void">Know More.</a></p>`,
-            'primaryBtn': 'OK',
-            'secondaryBtn': '',
-          }
-          createDialog(windowTracker[urlObj.origin], props, `${Date.now()}`, (resp) => {});
+          showUnsupportedJupyterMsg(urlObj);
         }
+      } else {
+        showUnsupportedJupyterMsg(urlObj);
       }
       callback(result);
     }); 
@@ -174,7 +196,14 @@ function askUserForShortcuts(url, window) {
     'title': 'Set shorcuts?',
     'primaryBtn': 'Yes',
     'secondaryBtn': 'No',
-    'content': `<p>Set JupyterLab shortcuts for Europa?</p><p class="text-secondary">E.g., Alt+Tab to switch tabs. Note that these changes are persistent. <a onClick="shell.openExternal('${EUROPA_HELP_SHORTCUTS_LINK}'); return false;" href="javascript:void">Know More</a></p>`
+    'content': `
+      <p>Set JupyterLab shortcuts for Europa?</p>
+      <p class="text-secondary">E.g., Alt+Tab to switch tabs. Note that these 
+      changes are persistent. 
+        <a onClick="shell.openExternal('${EUROPA_HELP_SHORTCUTS_LINK}'); return false;" href="javascript:void">
+          Know More
+        </a>
+      </p>`
   }
 
   var id = url+'_ask_shortcuts';
@@ -193,7 +222,10 @@ function sendShortcuts(id) {
   var url = id.replace(/_ask_shortcuts/, '');
   var urlObj = new URL(url);
 
-  const jsonData = fs.readFileSync(path.join('config', 'jupyter_keyboard_shortcuts.json'));
+  const shortcutsFile = path.join(
+    appDir, 'config', 'jupyter_keyboard_shortcuts.json'
+  );
+  const jsonData = fs.readFileSync(shortcutsFile);
   request.put(   
   {
     url : `${urlObj.origin}/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts?${Date.now()}`,
@@ -234,15 +266,17 @@ function createDialog(window, props, id, callback) {
     parent: window
   })
 
-  // dialogBox.setMenu(null)
-  // dialogBox.setAutoHideMenuBar(true)
-
+  electronLocalshortcut.register(dialogBox, 'Esc', () => {
+    dialogBox.close();
+  });
 
   dialogBox.webContents.on('did-finish-load', () => {
     dialogBox.webContents.send('construct', props, id);
   });
   
   dialogRespTracker[id] = callback;
+
+
 }
 
 function startHTTPProxy() {
@@ -285,6 +319,8 @@ function getCookies(urlRequested, callback) {
       (error, result) => {
         var key = urlObj.origin;
         
+        console.log(`Total ${result.length} cookies found`)
+
         /* Generate cookie in JupyterLab's format */
         jupyterCookieTracker[key] = {'cookie': undefined, 'xsrf': undefined};
         jupyterCookieTracker[key]['cookie'] = result[0]['name'];
@@ -295,11 +331,11 @@ function getCookies(urlRequested, callback) {
         jupyterCookieTracker[key]['cookie'] += '=';
         jupyterCookieTracker[key]['cookie'] += result[1]['value'];
 
-        // console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
+        console.log(`Cookie generated: ${jupyterCookieTracker[key]['cookie']}`);
 
         jupyterCookieTracker[key]['xsrf'] = result[0]['value'];
 
-        // console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
+        console.log(`XSRF generated: ${jupyterCookieTracker[key]['xsrf']}`);
 
         callback();
       }
@@ -330,10 +366,83 @@ function show404(event, errorCode, errorDescription, validatedUrl, isMainFrame) 
   });
 }
 
-function main () {
+function showOptionsWindow() {
+  if (!settingsWin) {
+    // create a new add todo window
+    settingsWin = new Window({
+      file: path.join('renderer', 'settings_page', 'settings.html'),
+      width: 700,
+      height: 600,
+      icon: iconPath,
+      frame: DRAW_FRAME,
+
+      // close with the main window
+      parent: mainWindow
+    })
+   
+    // cleanup
+    settingsWin.on('closed', () => {
+      settingsWin = null
+    })
+    
+    // Register shortcuts
+    electronLocalshortcut.register(settingsWin, 'Esc', () => {
+      settingsWin.close();
+    });
+
+    settingsWin.webContents.on('did-finish-load', () => {
+      settingsWin.webContents.send('settings-value', getSettings());
+    });
+  }
+}
+
+function clearCache() {
+  session.defaultSession.clearStorageData();
+}
+
+function setSettings(settingsObj) {
+  settingsDb.saveSettings(settingsObj);
+}
+
+function getSettings(settingsObj) {
+  return settingsDb.getSettings();
+}
+
+function showAboutDialog(win) {
+  const aboutDialogContents = `
+    <h4>About Europa v${VERSION_STRING}</h4>
+    <p>Copyright &#169; 2020 Suyash Mahar</p>
+    <p class="text-secondary">
+      This program is distributed under the terms of the 
+      <a onClick="shell.openExternal('https://www.gnu.org/licenses/gpl-3.0.en.html'); return false;" href="javascript:void">GPL v3</a>. 
+      Link to the 
+      <a class="text-small" onClick="shell.openExternal('https://github.com/suyashmahar/europa'); return false;" href="javascript:void">
+        Source code.
+      </a>
+    </p>
+  `;
+
+  const props = {
+    'type': 'info',
+    'title': 'About Europa',
+    'content': aboutDialogContents,
+    'primaryBtn': 'OK',
+    'secondaryBtn': ''
+  };
+
+  createDialog(mainWindow, props, String(Date.now()), () => void 0);
+}
+
+function main() {
+  fixASARPath();
+
+  console.log(settingsDb.getSettings());
+
   setupIcons();
   startHTTPProxy();
   
+  // Menu.setApplicationMenu(null);
+
   mainWindow = new Window({
     file: path.join('renderer', 'welcome.html'),
     titleBarStyle: "hidden",
@@ -341,19 +450,11 @@ function main () {
     frame: DRAW_FRAME,
   })
   
-  // Hide menu bars
-  // mainWindow.setMenu(null)
-  // mainWindow.setAutoHideMenuBar(true)
-
-  // add todo window
   let addTodoWin
   let newServerDialog
 
-  // TODO: put these events into their own file
-
-  // initialize with todos
   mainWindow.once('show', () => {
-    mainWindow.webContents.send('todos', todosData.todos)
+    mainWindow.webContents.send('recent-urls', recentUrlsDb.urls)
   })
 
   ipcMain.on('get-sys-cfg-jupyter-lab', (event) => {
@@ -365,6 +466,19 @@ function main () {
 
   ipcMain.on('start-server', (event, py, startAt, portNum) => {
     startServerOS(event, py, startAt, portNum)
+  });
+
+  ipcMain.on('save-settings', (event, settingsObj) => {
+    setSettings(settingsObj);
+  });
+
+  ipcMain.on('show-about-europa', (event, settingsObj) => {
+    showAboutDialog(event.sender);
+  });
+
+  ipcMain.on('clear-cache', (event, settingsObj) => {
+    console.log('Clearing cache');
+    clearCache();
   });
 
   ipcMain.on('open-url-window', () => {
@@ -383,17 +497,21 @@ function main () {
       })
      
       // Disable menu bar
-      addTodoWin.setMenu(null)
-      addTodoWin.setAutoHideMenuBar(true)
+      addTodoWin.removeMenu();
       
       // cleanup
       addTodoWin.on('closed', () => {
         addTodoWin = null
       })
-      addTodoWin.once('ready-to-show', () => {
-      })
+      
+      // Register shortcuts
+      electronLocalshortcut.register(addTodoWin, 'Esc', () => {
+        addTodoWin.close();
+      });
     }
   })
+
+  ipcMain.on('options-window', showOptionsWindow);
 
   // create add todo window
   ipcMain.on('new-server-window', () => {
@@ -413,8 +531,12 @@ function main () {
       })
 
       // Disable menu bar
-      newServerDialog.setMenu(null)
-      newServerDialog.setAutoHideMenuBar(true)
+      newServerDialog.removeMenu();
+
+      // Register shortcuts
+      electronLocalshortcut.register(newServerDialog, 'Esc', () => {
+        newServerDialog.close();
+      });
 
       // cleanup
       newServerDialog.on('closed', () => {
@@ -453,8 +575,7 @@ function main () {
     newJupyterWin.webContents.on("did-fail-load", show404);
     
     // Disable menu bar
-    // newJupyterWin.setMenu(null)
-    // newJupyterWin.setAutoHideMenuBar(true)
+    newJupyterWin.removeMenu();
 
     // cleanup
     newJupyterWin.on('closed', () => {
@@ -470,27 +591,30 @@ function main () {
       evt.preventDefault();
     });
 
-    // Register shortcuts
+    /* Register shortcuts */
     electronLocalshortcut.register(newJupyterWin, 'Ctrl+Shift+W', () => {
       newJupyterWin.close();
     });
   })
 
   ipcMain.on('add-recent-url', (event, url) => {
-    const updatedUrls = todosData.pushFront(url, MAX_RECENT_ITEMS).todos
+    const updatedUrls = recentUrlsDb.pushFront(url, MAX_RECENT_ITEMS).urls
 
-    mainWindow.send('todos', updatedUrls)
+    mainWindow.send('recent-urls', updatedUrls)
   })
 
-  ipcMain.on('delete-recent-url', (event, todo) => {
-    const updatedTodos = todosData.deleteTodo(todo).todos
+  ipcMain.on('delete-recent-url', (event, url) => {
+    const updatedUrls = recentUrlsDb.remove(url).urls
 
-    mainWindow.send('todos', updatedTodos)
+    mainWindow.send('recent-urls', updatedUrls)
   })
 
   ipcMain.on('dialog-result', (event, id, resp) => {
     dialogRespTracker[id](resp);
   });
+
+  console.log(`appDir: ${appDir}`)
+  console.log(`appDir: ${app.getAppPath()}`)
 }
 
 app.on('ready', main)

@@ -1,0 +1,11 @@
+body {
+    font: caption;
+    background-color: #fffbf6 !important;
+}
+
+/* For window header */
+.large-header {
+    padding-top: 10%;
+    padding-bottom: 8%;
+    padding-left: 0;
+}
