@@ -1,7 +1,7 @@
 {
   "name": "europa",
   "version": "1.0.0",
-  "description": "Feature rich thin-client for JupyterLab",
+  "description": "JupyterLab's Desktop client",
   "homepage": "europa.suyashmahar.com",
   "author": {
     "name": "Suyash Mahar",
@@ -31,13 +31,15 @@
   },
   "build": {
     "directories": {
-      "output": "../build/"
+      "output": "../build/",
+      "buildResources": "./build-resources/"
     },
     "appId": "com.suyashmahar.europa",
     "mac": {
       "category": "Utilities"
     },
     "linux": {
+      "icon": "build-resources/icon.png",
       "category": "Utility",
       "target": [
         "AppImage",
@@ -46,6 +48,7 @@
         "rpm",
         "freebsd",
         "pacman",
+        "fedora",
         "zip",
         "tar.xz",
         "tar.gz"
@@ -53,7 +56,8 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "portable"
       ]
     },
     "extraResources": [
@@ -69,8 +73,7 @@
         "from": "scripts",
         "to": "scripts"
       }
-    ],
-    "icon": "assets/img/europa_logo.png"
+    ]
   },
   "scripts": {
     "pack": "electron-builder --dir",
