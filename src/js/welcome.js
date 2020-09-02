@@ -6,7 +6,6 @@ const winDecorations = require('../js/modules/winDecorations');
  
 const recentItemClicked = (e) => {
   console.log(e.target.textContent);
-  ipcRenderer.send('add-recent-url', e.target.textContent);
   ipcRenderer.send('open-url', e.target.textContent);
 }
 const deleteRecentItemClicked = (e) => {

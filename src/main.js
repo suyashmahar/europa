@@ -543,53 +543,70 @@ function showNewServerDialog() {
  * @param {String} url URL to browse to
  */
 function showEuropaBrowser(e, url) {
-    // Track for login on the opened url
-    addTrackingForUrl(url);
+  try {
     var urlObj = new URL(url)
-    
-    // Create a title for the new window
-    var windowTitle = 'Europa @ '.concat(url.substring(0, 100));
-    if (url.length > 100) {
-      windowTitle.concat('...');
+  } catch (error) {	 
+    const props = {
+      'type': 'error',
+      'title': 'URL Error',
+      'content': `
+      <p>Invalid URL entered</p>
+      <p class="text-secondary">Europa did not understant '${url}' as a valid URL. Please make sure that the URL includes the protocol (e.g., http:// or https://).</p>`,
+      'primaryBtn': 'OK',
+      'secondaryBtn': '',
     }
-    
-    var newJupyterWin = new BrowserWindow({
-      width: 1080,
-      height: 768,
-      preload: path.join(appDir, 'js', 'preload404.js'),
-      webPreferences: {
-        nodeIntegration: false
-      },
-      icon: iconPath,
-      frame: DRAW_FRAME,
-      title: windowTitle
-    })
-    
-    windowTracker[urlObj.origin] = newJupyterWin;
-    newJupyterWin.loadURL(url);
+    createDialog(mainWindow, props, `${Date.now()}`, (resp) => {});
+    return;
+  }
 
-    /* Set did-fail-load listener once */
-    newJupyterWin.webContents.on("did-fail-load", show404);
-    
-    /* cleanup */
-    newJupyterWin.on('closed', () => {
-      newJupyterWin = null
-      removeTrackingForUrl(url);
-    })
+  addRecentURL(url);
 
-    newJupyterWin.once('ready-to-show', () => {
-      newJupyterWin.show()
-    })
+  // Track for login on the opened url
+  addTrackingForUrl(url);
+  
+  // Create a title for the new window
+  var windowTitle = 'Europa @ '.concat(url.substring(0, 100));
+  if (url.length > 100) {
+    windowTitle.concat('...');
+  }
+  
+  var newJupyterWin = new BrowserWindow({
+    width: 1080,
+    height: 768,
+    preload: path.join(appDir, 'js', 'preload404.js'),
+    webPreferences: {
+      nodeIntegration: false
+    },
+    icon: iconPath,
+    frame: DRAW_FRAME,
+    title: windowTitle
+  })
+  
+  windowTracker[urlObj.origin] = newJupyterWin;
+  newJupyterWin.loadURL(url);
 
-    /* Prevent the title from being updated */
-    newJupyterWin.on('page-title-updated', (evt) => {
-      evt.preventDefault();
-    });
+  /* Set did-fail-load listener once */
+  newJupyterWin.webContents.on("did-fail-load", show404);
+  
+  /* cleanup */
+  newJupyterWin.on('closed', () => {
+    newJupyterWin = null
+    removeTrackingForUrl(url);
+  })
 
-    /* Register shortcuts */
-    electronLocalshortcut.register(newJupyterWin, 'Ctrl+Shift+W', () => {
-      newJupyterWin.close();
-    });
+  newJupyterWin.once('ready-to-show', () => {
+    newJupyterWin.show()
+  })
+
+  /* Prevent the title from being updated */
+  newJupyterWin.on('page-title-updated', (evt) => {
+    evt.preventDefault();
+  });
+
+  /* Register shortcuts */
+  electronLocalshortcut.register(newJupyterWin, 'Ctrl+Shift+W', () => {
+    newJupyterWin.close();
+  });
 }
 
 function addMainWindowShortcuts() {
@@ -598,14 +615,18 @@ function addMainWindowShortcuts() {
 }
 
 /**
+ * Add a new url to the recent list and update mainWindow
+ * @param {String} url URL to add to the recent list
+ */
+function addRecentURL(url) {
+  const updatedUrls = recentUrlsDb.pushFront(url, MAX_RECENT_ITEMS).urls;
+  mainWindow.send('recent-urls', updatedUrls);
+}
+
+/**
  * Add listeners for getting and setting recent URL list
  */
 function addRecentURLListeners() {
-  ipcMain.on('add-recent-url', (event, url) => {
-    const updatedUrls = recentUrlsDb.pushFront(url, MAX_RECENT_ITEMS).urls;
-    mainWindow.send('recent-urls', updatedUrls);
-  })
-
   ipcMain.on('delete-recent-url', (event, url) => {
     const updatedUrls = recentUrlsDb.remove(url).urls;
     mainWindow.send('recent-urls', updatedUrls);

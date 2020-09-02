@@ -13,8 +13,6 @@ function main() {
     const input = document.getElementById('add-input');
 
     if (input.value != '') {
-      ipcRenderer.send('add-recent-url', input.value);
-
       ipcRenderer.send('open-url', input.value);
       
       // Close the window

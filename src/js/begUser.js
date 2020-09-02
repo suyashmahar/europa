@@ -58,7 +58,6 @@ function startServerResp(event, result) {
         url = url.replace(/(^[ '\^\$\*#&]+)|([ '\^\$\*#&]+$)/g, '')
         
         if (url) {
-            ipcRenderer.send('add-recent-url', url);
             ipcRenderer.send('open-url', url);
             var window = remote.getCurrentWindow();
             window.close();
