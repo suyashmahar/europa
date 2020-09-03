@@ -18,5 +18,10 @@ You can either grab a portable app for linux/windows or grab OS specific install
 ![Screenshot of Europa's advanced configuration page](github-assets/img/screenshot2.png)
 ![Screenshot of Europa's advanced configuration page](github-assets/img/screenshot3.png)
 
+# Contributing
+If Europa helped you in your work, please consider contributing or donating a small amount to the project!
+
+<a target="_blank" href="https://donorbox.org/europa-donations?default_interval=o"><img src="https://d1iczxrky3cnb2.cloudfront.net/button-medium-blue.png" /></a>
+
 # License
 This program is distributed under the terms of the [GPL v3](https://perso.crans.org/besson/LICENSE.html).
