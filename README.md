@@ -14,7 +14,7 @@ You can either grab a portable app for linux/windows or grab OS specific install
 
 # Demo
 (YouTube)  
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Qg6RwUoB6G0/0.jpg)](https://www.youtube.com/watch?v=Qg6RwUoB6G0)
+[![Europa Demo video](https://imgur.com/a/abRY2sy)](https://www.youtube.com/watch?v=Qg6RwUoB6G0)
 
 # Contributing
 If Europa helped you in your work, please consider contributing or donating a small amount to the project!
