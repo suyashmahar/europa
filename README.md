@@ -12,11 +12,9 @@ Europa supports all the keyboard shortcuts for JupyterLab that you'd expect in a
 # Installation
 You can either grab a portable app for linux/windows or grab OS specific installer from the [releases](https://github.com/suyashmahar/europa/releases).
 
-# Screenshots
-![Screenshot of Europa's welcome page](github-assets/img/screenshot0.png)
-![Screenshot of Europa's create new server page](github-assets/img/screenshot1.png)
-![Screenshot of Europa's advanced configuration page](github-assets/img/screenshot2.png)
-![Screenshot of Europa's advanced configuration page](github-assets/img/screenshot3.png)
+# Demo
+(YouTube)  
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Qg6RwUoB6G0/0.jpg)](https://www.youtube.com/watch?v=Qg6RwUoB6G0)
 
 # Contributing
 If Europa helped you in your work, please consider contributing or donating a small amount to the project!
