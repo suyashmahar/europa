@@ -21,5 +21,15 @@ If Europa helped you in your work, please consider contributing or donating a sm
 
 <a target="_blank" href="https://donorbox.org/europa-donations?default_interval=o"><img src="https://d1iczxrky3cnb2.cloudfront.net/button-medium-blue.png" /></a>
 
+# Gallery
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/21097167/134625146-a7b7d0e1-2d2f-4d30-84ff-de6dfde8fae6.png" width="400"> <img src="https://user-images.githubusercontent.com/21097167/134624744-1788ec8a-d75d-4e0e-91cf-f3e6257f4bed.png" width="400"> <img src="https://user-images.githubusercontent.com/21097167/134625215-b8dcc470-47d0-42d7-9796-c8a1fed002c0.png" width="400"> <img src="https://user-images.githubusercontent.com/21097167/134625337-49968b54-3163-4eb3-8afa-1f9c0282f20d.png" width="400">
+</p>
+
+
+
 # License
-This program is distributed under the terms of the [GPL v3](https://perso.crans.org/besson/LICENSE.html).
+This program is distributed under the terms of the [GPL v3](https://perso.crans.org/besson/LICENSE.html), except when noted otherwise.
+
+Rights to all artworks in this program is reserved, unless noted otherwise. Copyright (c) 2020-21 Suyash Mahar.
