@@ -15,9 +15,9 @@
   ],
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "electron-builder": "^22.8.0",
     "devtron": "^1.4.0",
-    "electron": "^5.0.4",
+    "electron": "^9.0.0",
+    "electron-builder": "^22.14.5",
     "standard": "^12.0.1"
   },
   "dependencies": {

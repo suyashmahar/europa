@@ -1,3 +1,5 @@
+// -*- js-indent-level: 2; -*-
+
 'use strict'
 
 const path = require('path')
@@ -5,6 +7,7 @@ const request = require('request')
 const { app, BrowserWindow, ipcMain, Menu, session } = require('electron')
 const fs = require('fs')
 const os = require('os')
+const process = require('process')
 
 const Window = require('./Window')
 const RecentUrlsDB = require('./RecentUrlsDB')
@@ -582,7 +585,8 @@ function showEuropaBrowser (e, url) {
     height: 768,
     preload: path.join(appDir, 'js', 'preload404.js'),
     webPreferences: {
-      nodeIntegration: false
+      nodeIntegration: false,
+      plugins: true
     },
     icon: iconPath,
     frame: DRAW_FRAME,
@@ -640,7 +644,21 @@ function addRecentURLListeners () {
   })
 }
 
+/**
+ * Parse command line arguments
+ */
+function parseCmdlineArgs() {
+  let args = process.argv
+  console.log(args)
+
+  for (let i = 0; i < args.length; i++) {
+    
+  }
+}
+
 function main () {
+  parseCmdlineArgs()
+  
   fixASARPath()
 
   setupIcons()
