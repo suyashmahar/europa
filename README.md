@@ -20,6 +20,9 @@ sudo curl -s --compressed -o /etc/apt/sources.list.d/europa.list "https://europa
 sudo apt update && sudo apt-get install europa
 ```
 
+### Other Operating Systems
+Checkout the [Release Page](https://github.com/suyashmahar/europa/releases).
+
 ## CLI
 Europa supports a CLI interface:
 ```
