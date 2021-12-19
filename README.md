@@ -17,8 +17,7 @@ You can either grab a portable app for linux/windows or grab OS specific install
 ```
 curl -s --compressed "https://europa-sources.suyashmahar.com/debian/KEY.gpg" | sudo apt-key add -
 sudo curl -s --compressed -o /etc/apt/sources.list.d/europa.list "https://europa-sources.suyashmahar.com/debian/europa.list"
-sudo apt update
-sudo apt-get install europa
+sudo apt update && sudo apt-get install europa
 ```
 
 
