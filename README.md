@@ -12,6 +12,26 @@ Europa supports all the keyboard shortcuts for JupyterLab that you'd expect in a
 # Installation
 You can either grab a portable app for linux/windows or grab OS specific installer from the [releases](https://github.com/suyashmahar/europa/releases).
 
+### Debian/Ubuntu
+
+```
+curl -s --compressed "https://europa-sources.suyashmahar.com/debian/KEY.gpg" | sudo apt-key add -
+sudo curl -s --compressed -o /etc/apt/sources.list.d/europa.list "https://europa-sources.suyashmahar.com/debian/europa.list"
+sudo apt update && sudo apt-get install europa
+```
+
+## CLI
+Europa supports a CLI interface:
+```
+USAGE:
+        /tmp/.mount_europaZ88iLd/europa [options]
+
+OPTIONS:
+        -u,--url <url>  Open a europa window for <url> on start.
+        -v,--version    Print version number and exit.
+        -h,--help       Print this help message and exit.
+```
+
 # Demo
 (YouTube)  
 [![Europa Demo video](https://imgur.com/download/dyLvkW8/)](https://www.youtube.com/watch?v=Qg6RwUoB6G0)

@@ -25,7 +25,7 @@ const MAX_RECENT_ITEMS = 4
 const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts`
 const USER_AGENT_STR = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
 const DRAW_FRAME = true
-const VERSION_STRING = '1.0.0'
+const VERSION_STRING = '1.1.0'
 
 /* Create all the data stores */
 const recentUrlsDb = new RecentUrlsDB({ name: 'recent_urls' })
@@ -644,20 +644,76 @@ function addRecentURLListeners () {
   })
 }
 
+function printCLIHeader() {
+    console.log("Europa " + VERSION_STRING)
+}
+
+function printCLIHelp(args, header, stderr) {
+  let log_obj
+
+  if (stderr) {
+    log_obj = console.error
+  } else {
+    log_obj = console.log
+  }
+  
+  if (header) {
+    printCLIHeader()
+    log_obj("")
+  }
+
+  log_obj("USAGE:\n\t" + args[0] + " [options]")
+  log_obj()
+  log_obj("OPTIONS:")
+  log_obj("\t-u,--url <url> \tOpen a europa window for <url> on start.")
+  log_obj("\t-v,--version   \tPrint version number and exit.")
+  log_obj("\t-h,--help      \tPrint this help message and exit.")
+  log_obj()
+  log_obj("OTHER:")
+  log_obj("\tCopyright (c) 2020-21 Europa Authors")
+  log_obj("\tReport bugs at: https://europa.suyashmahar.com/report-bugs")
+}
+
+function printCLIVersion() {
+  printCLIHeader();
+}
+
 /**
  * Parse command line arguments
  */
 function parseCmdlineArgs() {
   let args = process.argv
-  console.log(args)
+  let result = {'url': ''}
 
-  for (let i = 0; i < args.length; i++) {
-    
+  for (let i = 1; i < args.length; i++) {
+    if (args[i] == "--help" || args[i] == "-h") {
+      printCLIHelp(args, true)
+      app.exit(0)
+    } else if (args[i] == "--version" || args[i] == "-v") {
+      printCLIVersion()
+      app.exit(0)
+    } else if (args[i] == "--url" || args[i] == "-u") {
+      if (args.length < i + 2) {
+        console.error("--url requires exactly one argument")
+        console.error()
+        printCLIHelp(args, false, true)
+      }
+      
+      result['url'] = args[i + 1]
+      i += 1
+    } else {
+      console.error("Unknown argument '" + args[i] + "'")
+      console.error()
+      printCLIHelp(args, false, true)
+      app.exit(1)
+    }    
   }
+
+  return result
 }
 
 function main () {
-  parseCmdlineArgs()
+  let args = parseCmdlineArgs()
   
   fixASARPath()
 
@@ -691,6 +747,10 @@ function main () {
   ipcMain.on('open-url', showEuropaBrowser)
   ipcMain.on('show-about-europa', e => showAboutDialog(e.sender))
   ipcMain.on('dialog-result', (event, id, resp) => dialogRespTracker[id](resp))
+
+  if (args['url'] != "") {
+    showEuropaBrowser(null, args.url)
+  }
 }
 
 app.on('ready', main)
