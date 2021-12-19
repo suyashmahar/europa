@@ -20,6 +20,17 @@ sudo curl -s --compressed -o /etc/apt/sources.list.d/europa.list "https://europa
 sudo apt update && sudo apt-get install europa
 ```
 
+## CLI
+Europa supports a CLI interface:
+```
+USAGE:
+        /tmp/.mount_europaZ88iLd/europa [options]
+
+OPTIONS:
+        -u,--url <url>  Open a europa window for <url> on start.
+        -v,--version    Print version number and exit.
+        -h,--help       Print this help message and exit.
+```
 
 # Demo
 (YouTube)  
