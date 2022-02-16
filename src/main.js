@@ -1,13 +1,13 @@
 // -*- js-indent-level: 2; -*-
 
 'use strict'
-
 const path = require('path')
 const request = require('request')
 const { app, BrowserWindow, ipcMain, Menu, session } = require('electron')
 const fs = require('fs')
 const os = require('os')
 const process = require('process')
+const contextMenu = require('electron-context-menu');
 
 const Window = require('./Window')
 const RecentUrlsDB = require('./RecentUrlsDB')
@@ -87,6 +87,22 @@ let monitorStartServerChild = (event, child) => {
     console.error('Shell Errors: ' + data)
   })
 }
+
+// Configure the context menu for shift+right-click
+contextMenu({
+  prepend: (defaultAction, params, browserWindow) => [{
+    role: "zoomIn",
+  }, {
+    role: "zoomOut",
+  }, {
+    role: "editMenu",
+    visible: params.selectionText.trim().length > 0,
+  }, {
+    role: "toggleDevTools",
+  }, {
+    role: "forceReload",
+  }] 
+});
 
 /**
  * Starts a new JupyterLab server on Windows OS. See @ref startServer
