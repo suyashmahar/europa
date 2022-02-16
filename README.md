@@ -20,6 +20,9 @@ sudo curl -s --compressed -o /etc/apt/sources.list.d/europa.list "https://europa
 sudo apt update && sudo apt-get install europa
 ```
 
+### Other Operating Systems
+Checkout the [Release Page](https://github.com/suyashmahar/europa/releases).
+
 ## CLI
 Europa supports a CLI interface:
 ```
@@ -37,9 +40,7 @@ OPTIONS:
 [![Europa Demo video](https://imgur.com/download/dyLvkW8/)](https://www.youtube.com/watch?v=Qg6RwUoB6G0)
 
 # Contributing
-If Europa helped you in your work, please consider contributing or donating a small amount to the project!
-
-<a target="_blank" href="https://donorbox.org/europa-donations?default_interval=o"><img src="https://d1iczxrky3cnb2.cloudfront.net/button-medium-blue.png" /></a>
+If Europa helped you in your work, please consider contributing to the project!
 
 # Gallery
 
