@@ -25,7 +25,7 @@ const MAX_RECENT_ITEMS = 4
 const SHORTCUT_SEND_URL = `/lab/api/settings/@jupyterlab/shortcuts-extension:shortcuts`
 const USER_AGENT_STR = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
 const DRAW_FRAME = true
-const VERSION_STRING = '1.1.0'
+const VERSION_STRING = '1.1.1'
 
 /* Create all the data stores */
 const recentUrlsDb = new RecentUrlsDB({ name: 'recent_urls' })
