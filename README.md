@@ -53,4 +53,4 @@ If Europa helped you in your work, please consider contributing to the project!
 # License
 This program is distributed under the terms of the [GPL v3](https://perso.crans.org/besson/LICENSE.html), except when noted otherwise.
 
-Rights to all artworks in this program is reserved, unless noted otherwise. Copyright (c) 2020-21 Suyash Mahar.
+Rights to all artworks in this program are reserved, unless noted otherwise. Copyright (c) 2020-22 Suyash Mahar.
