@@ -27,7 +27,7 @@ Checkout the [Release Page](https://github.com/suyashmahar/europa/releases).
 Europa supports a CLI interface:
 ```
 USAGE:
-        /tmp/.mount_europaZ88iLd/europa [options]
+        europa [options]
 
 OPTIONS:
         -u,--url <url>  Open a europa window for <url> on start.
